@@ -1,0 +1,57 @@
+.btn-container button {
+    outline: none;
+    border: none;
+    background-color: rgb(91, 140, 245);
+    color: white;
+    font-size: 15px;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: 400;
+}
+
+.side-bar-container {
+    flex: 0 11em;
+    min-width: 11em;
+    background-color: black;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+    color: white;
+    padding-right: 1em;
+    box-shadow: 0 0 8px 1px rgb(51, 51, 51);
+}
+
+.side-bar-container h2 {
+    padding: 26px 14px;
+    margin: 0;
+}
+
+.side-bar-container p {
+    color: rgb(235, 235, 235);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    margin: 15px 0;
+    width: 70%;
+
+}
+
+.side-bar-container p:hover {
+    cursor: pointer;
+    background-color: rgb(76, 4, 185);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.side-bar-container p:active {
+    background-color: rgb(76, 4, 185);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.side-bar-container div {
+    margin: 3em 0;
+}

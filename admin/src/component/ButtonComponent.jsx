@@ -1,7 +1,10 @@
+import "./component.css"
 
 function ButtonComponent() {
   return (
-    <div>ButtonComponent</div>
+    <div className="btn-container">
+      <button>Upload Product</button>
+    </div>
   )
 }
 
