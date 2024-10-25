@@ -1,3 +1,4 @@
+import InfoCard from "../component/InfoCard";
 import SideBarComponent from "../component/SideBarComponent"
 import "./addProduct.css"
 import { AiFillDelete } from "react-icons/ai";
@@ -8,7 +9,8 @@ function ProductsList() {
         <div className="customer-page-container">
             <SideBarComponent />
             <div className="customers-page-content">
-                <h2>Products</h2>
+                <h1>Products</h1>
+                <InfoCard />
                 <div className="products-list">
                     <table>
                         <tr>

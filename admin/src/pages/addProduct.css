@@ -90,6 +90,10 @@
     gap: 30px;
 }
 
+.products-list {
+    margin: 1px auto;
+}
+
 .products-list table {
     border-collapse: collapse;
     padding: 1em;
@@ -109,8 +113,9 @@
 }
 
 .products-list th {
-    background-color: rgb(248, 239, 226);
+    background-color: rgb(41, 41, 41);
     padding: 10px 2em;
+    color: white;
 }
 
 .products-list tr:nth-child(even) {

@@ -55,3 +55,20 @@
 .side-bar-container div {
     margin: 3em 0;
 }
+
+.info-card-container h4, h2 {
+    margin: 6px;
+}
+
+.info-card-container {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(200, 163, 255);
+    justify-content: flex-start;
+    align-items: center;
+    height: 4.5em;
+    width: 11em;
+    border-radius: 5px;
+    gap: 0;
+    margin: 5px auto 3em;
+}
