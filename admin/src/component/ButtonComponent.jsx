@@ -3,7 +3,7 @@ import "./component.css"
 function ButtonComponent() {
   return (
     <div className="btn-container">
-      <button>Upload Product</button>
+      <button type="submit">Upload Product</button>
     </div>
   )
 }

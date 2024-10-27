@@ -12,8 +12,7 @@ export const fetchUsers = createAsyncThunk(
                 }
             })
             const response = await req.json()
-            // console.log(response)
-            return response
+            return response.users
         }
         catch (err) {
             return thunkAPI.rejectWithValue(err.response.data.error)

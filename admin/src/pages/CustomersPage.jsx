@@ -6,7 +6,7 @@ import { fetchUsers } from "../redux/userSlice"
 
 function CustomersPage() {
   const dispatch = useDispatch()
-  const {isLoading, users}= useSelector(state=>state.user)
+  const {users}= useSelector(state=>state.user)
 
   useEffect(() => {
     dispatch(fetchUsers())
@@ -29,8 +29,8 @@ function CustomersPage() {
             <tbody>
               {
                 users.map(user => {
-                  return  <tr key={user.id}>
-                    <td>{user.id}</td>
+                  return  <tr key={user._id}>
+                    <td>{user._id}</td>
                     <td>{user.email}</td>
                 </tr>
                 })
