@@ -14,7 +14,7 @@ function ProductsList() {
     
     useEffect(() => {
         dispatch(fetchProduct())
-    },[dispatch])
+    },[])
 
     return (
         <div className="customer-page-container">
@@ -40,10 +40,10 @@ function ProductsList() {
                                 products.map(product => {
                                     return <tr key={product._id}>
                                     <td>1</td>
-                                    <td><img src="https://www.runningbare.com.au/productimages/magnify/1/2229_19533_9089.jpg" alt="cargo" /></td>
-                                    <td>Cargo Pants</td>
-                                    <td>Women</td>
-                                    <td>1000</td>
+                                    <td><img src={product.image[0].path} alt="cargo" /></td>
+                                        <td>{ product.name}</td>
+                                        <td>{product.category}</td>
+                                        <td>{product.price}</td>
                                     <td><AiFillDelete style={{ color: "red", height: "1.4em", width: "1.2em" }} />
                                         <MdEdit style={{ color: "blue", height: "1.4em", width: "1.2em", marginLeft: "15px" }} />
                                     </td>

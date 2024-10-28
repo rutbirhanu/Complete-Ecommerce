@@ -12,7 +12,6 @@ export const addProduct = createAsyncThunk(
                 body: JSON.stringify(product)
             })
             const response = await req.json()
-            console.log(response)
             return response
         }
         catch (err) {
@@ -23,6 +22,7 @@ export const addProduct = createAsyncThunk(
 
 
 export const fetchProduct = createAsyncThunk(
+    "product/fetchProductData",
     async (_, thunkAPI) => {
         try {
             const request = await fetch("http://localhost:3500/product/all-products",
@@ -34,15 +34,14 @@ export const fetchProduct = createAsyncThunk(
                 }
             )
             const response = await request.json()
-            console.log(response)
-            return response
+            console.log(response.products[0])
+            return response.products
         }
         catch (err) {
             return thunkAPI.rejectWithValue(err.response.data.error)
         }
     }
 )
-
 
 
 const productSlice = createSlice({

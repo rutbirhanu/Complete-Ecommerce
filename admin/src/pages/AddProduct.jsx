@@ -12,6 +12,7 @@ function AddProduct() {
     image:""
   })
   
+  const [previewImage, setPreviewImage]= useState(null)
 
   const handleOnChange = (e) => {
     const { name, value, files } = e.target;
@@ -19,6 +20,7 @@ function AddProduct() {
         ...prevData,
         [name]: files ? files[0] : value 
     }));
+    setPreviewImage(URL.createObjectURL(files[0]))
 };
 
 
@@ -45,15 +47,17 @@ function AddProduct() {
       <div className="content-wrapper">
         <SideBarComponent />
         <div className="main-content">
+        <form onSubmit={handleSubmit}>
+
           <div className="main-title-container">
             <h2>Add Product</h2>
+            <ButtonComponent />
           </div>
 
           <div className="add-product-form">
             <div className="left-side">
               <h2>Product Information</h2>
 
-              <form onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name"> Product Name</label>
                   <input type="text" name="name" onChange={handleOnChange} value={formData.name} />
@@ -73,22 +77,21 @@ function AddProduct() {
                   <label htmlFor="price">Price</label>
                   <input type="text" name="price" onChange={handleOnChange} value={formData.price}/>
                 </div>
-            <ButtonComponent />
+              </div>
 
-           
 
             <div className="right-side">
-              <h2>Upload Image</h2>
+              <h2 style={{marginBottom:"1em"}}>Upload Image</h2>
               <input type="file" name="image" onChange={handleOnChange} />
               <div className="product-image">
-                <img src="https://assets.adidas.com/images/w_600,f_auto,q_auto/f2d9229b65c248488c78af3b00851dab_9366/Runfalcon_3.0_Shoes_White_HP7557_01_standard.jpg" />
+                <img src={previewImage} />
                 <button>Browse</button>
               </div>
 
             </div>
-              </form>
-              </div>
           </div>
+          </form>
+
         </div>
       </div>
     </div>
