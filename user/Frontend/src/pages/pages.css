@@ -1,0 +1,145 @@
+body {
+    font-family: Averta, sans-serif;
+}
+
+body a {
+    color: black;
+    text-decoration: none;
+    font-family: Averta, sans-serif;
+    font-size: 18px;
+}
+
+.categories-container {
+    display: flex;
+    flex-direction: row;
+    gap: 35px;
+    margin: 0 1.5em 1em 1.5em;
+    overflow-x: auto;
+}
+
+.categories-container::-webkit-scrollbar {
+    width: 0;
+}
+
+.category-card-container {
+    margin: 3em 0;
+}
+
+.brand-parent-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow-x: auto;
+    gap: 3em;
+}
+
+
+.category-items {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    margin: 1em;
+}
+
+.category-items::-webkit-scrollbar {
+    width: 0;
+}
+
+.details-page-container {
+    padding: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    /* align-items: center; */
+}
+
+.details-left-side img {
+    max-width: 60vw;
+    min-width: 45vw;
+    max-height: 70vh;
+    min-height: 30vh;
+    border-radius: 5px;
+}
+
+.details-right-side h3 {
+    font-family: Averta, sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+}
+
+.details-right-side {
+    min-width: 30vw;
+    max-width: 90vw;
+}
+
+.item-details h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 1em;
+}
+
+.item-details {
+    margin: 1em 5em 1em 0;
+    padding: 1em;
+    min-width: 3e0vw;
+    max-width: 90vw;
+}
+
+.item-details .detail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px;
+}
+
+.item-details .detail span:nth-child(odd) {
+    color: rgb(118, 118, 118);
+    padding-right: 2em;
+}
+
+.similar-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    margin-left: 15px;
+}
+
+.category-items-page-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1em;
+}
+
+.success-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-container {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:space-evenly;
+    height: 80vh;
+}
+
+.cancel-container img {
+    width: 12%;
+}
+
+.success-container img {
+    height: 30%;
+}
+
+@media only screen and (max-width:1030px) {
+    .details-page-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .details-left-side {
+        margin-bottom: 2em;
+    }
+}
