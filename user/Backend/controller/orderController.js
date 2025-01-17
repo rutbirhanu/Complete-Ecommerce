@@ -28,7 +28,7 @@ const allOrders = async (req, res) => {
 
 
 const getOrders = async (req, res) => {
-    const { page = 1, limit = 2, search = '', status, startDate, endDate } = req.query;
+    const { page = 1, limit = 10, search = '', status, startDate, endDate } = req.query;
 
     const query = {};
     if (search) {
