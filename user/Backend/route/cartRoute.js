@@ -1,5 +1,5 @@
 const express = require("express")
-const {getUserCart, updateCart, addToCart } = require("../controller/cartController")
+const {getUserCart, updateCart, addToCart,increaseItemAmount, decreaseItemAmount} = require("../controller/cartController")
 const router = express.Router()
 const verifyToken= require("../middleware/verifyToken")
 
