@@ -1,7 +1,12 @@
-
 const productSchema = require("../model/product")
 const { getMessaging } = require("firebase-admin/messaging")
 const admin = require("firebase-admin")
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Your Cloudinary cloud name
+    api_key: process.env.CLOUDINARY_API_KEY,       // Your Cloudinary API key
+    api_secret: process.env.CLOUDINARY_API_SECRET, // Your Cloudinary API secret
+});
 
 
 const sendNotification = async (req, res) => {
@@ -74,7 +79,8 @@ const addProduct = async (req, res) => {
         if (!image) {
             return res.status(404).json("images not found")
         }
-        const product = await productSchema.create({ name, category, brand, price, description, image: image })
+        const imageUrl = req.file.path;
+        const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl })
         // await sendNotification(req, res)
         res.status(201).json("product created")
     }
@@ -86,11 +92,19 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { productId } = req.params
-        const { name, category, brand, price, description } = req.body
+        const { name, category, brand, price, description, image } = req.body
 
+        if (req.file) {
+            // Assuming req.file contains the image uploaded via Multer
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'uploads', // Cloudinary folder
+            });
+            image = result.secure_url; // Store the image URL in the updated data
+        }
+        
         const updatedProduct = await productSchema.findByIdAndUpdate(
             productId,
-            { name, category, brand, price, description },
+            { name, category, brand, price, description, image },
             { new: true }  // option to return the updated document
         );
 
