@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, isPending } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
 
 export const addToCart = createAsyncThunk(
@@ -49,7 +49,54 @@ export const removeFromCart = createAsyncThunk(
     }
 )
 
+export const increaseQuantity = createAsyncThunk(
+    "cart/increaseQuantity",
+    async(itemId, thunkAPI)=> {
+    try {
+        const req = await fetch("http://localhost:3500/cart/increase-quantity",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(itemId)
+            }
+        )
+        const res = await req.json()
+        console.log(res)
+        return res
 
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(err.response.data.error)
+    }
+    }
+)
+
+
+export const decreaseQuantity = createAsyncThunk(
+    "cart/decreaseQuantity",
+    async(itemId, thunkAPI)=> {
+    try {
+        const req = await fetch("http://localhost:3500/cart/decrease-quantity",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(itemId)
+            }
+        )
+        const res = await req.json()
+        console.log(res)
+        return res
+
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(err.response.data.error)
+    }
+    }
+)
 
 
 
@@ -57,7 +104,8 @@ let initialState = {
     products: [],
     totalPrice: 0,
     totalQuantity: 0,
-    isPending:false
+    isPending: false,
+    error:false
 }
 
 
@@ -71,6 +119,24 @@ const cartSlice = createSlice({
             })
             .addCase(addToCart.fulfilled, (state, action) => {
                 state.products = action.payload
+            })
+            .addCase(addToCart.rejected, state => {
+                state.error= true
+            })
+            .addCase(removeFromCart.pending, state => {
+                state.isLoading= true
+            })
+            .addCase(removeFromCart.fulfilled, (state, action) => {
+                 state.products=action.payload
+            })
+            .addCase(removeFromCart.rejected, state => {
+                 state.error= true
+            })
+            .addCase(increaseQuantity.pending, state => {
+                state.isPending= true
+            })
+            .addCase(increaseQuantity.fulfilled, (state, action) => {
+                state.pro
             })
     }
 })
