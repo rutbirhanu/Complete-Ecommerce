@@ -70,6 +70,23 @@ const allProducts = async (req, res) => {
 }
 
 
+const fetchSingleProduct = async (req, res) => {
+    try {
+        const { productId } = req.params
+
+        const product = await productSchema.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        res.status(200).json(product)
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json("error while fetching prduct ")
+    }
+}
+
 // admin apis
 
 const addProduct = async (req, res) => {
@@ -139,4 +156,4 @@ const deleteProduct = async (req, res) => {
 }
 
 
-module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct }
+module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct, fetchSingleProduct}
