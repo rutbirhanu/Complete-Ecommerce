@@ -14,8 +14,8 @@ import { useEffect } from "react";
 import Verify from "./pages/Verify";
 // import { requestFCMToken } from "./firebase";
 import { useDispatch} from "react-redux"
-import { setProduct } from "./redux/productSlice"
-import { Items } from "./assets/data/items"
+import { fetchAllProducts} from "./redux/productSlice"
+// import { Items } from "./assets/data/items"
 
 
 
@@ -37,7 +37,7 @@ function App() {
 
   
   useEffect(() => {
-    dispatch(setProduct(Items))
+    dispatch(fetchAllProducts)
 
   }, [])
 
