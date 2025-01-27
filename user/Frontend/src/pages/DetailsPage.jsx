@@ -9,17 +9,20 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import SnackBar from '../components/snackBarComponent.jsx'
 import { addToCart } from '../redux/cartSlice.js'
+import { fetchProductDetail } from '../redux/productSlice.js'
 
 
 function DetailsPage() {
   const { id } = useParams()
   const dispatch= useDispatch()
+  const { product } = useSelector(state => state.product)
   const { products } = useSelector(state => state.product)
-  const [product, setProduct] = useState({})
+  // const [product, setProduct] = useState({})
 
   useEffect(() => {
-    const selectedProduct = products.find(product => (product.id === id))
-    setProduct(selectedProduct)
+    dispatch(fetchProductDetail(id))
+    // const selectedProduct = products.find(product => (product.id === id))
+    // setProduct(selectedProduct)
 
   }, [id])
 

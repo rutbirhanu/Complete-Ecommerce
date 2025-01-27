@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./cart.css"
 import CartItemCard from "../components/cartItemCard";
@@ -10,6 +10,7 @@ import { loadStripe } from "@stripe/stripe-js";
 function CartPage() {
   const { products, totalQuantity, totalPrice } = useSelector(state => state.cart)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const makePayment = async() => {
     const stripe = await loadStripe(import.meta.env.VITE_API_STRIPE_PUBLISHABLE_KEY)
@@ -26,7 +27,7 @@ function CartPage() {
     const result = await stripe.redirectToCheckout({
       sessionId:session.id
     })
-    console.log(result)
+    console.log(products)
   }
   
   return (
@@ -42,7 +43,7 @@ function CartPage() {
             </div>
             {
               products.map(product => (
-                <CartItemCard name={product.name} id={product.id} quantity={product.quantity} price={product.price} key={product.id} image={product.image} />
+                <CartItemCard key={product._id} name={product.name} id={product._id} quantity={product.quantity} price={product.price} image={product.image} />
               ))
             }
          

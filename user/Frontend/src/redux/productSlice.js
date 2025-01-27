@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const fetchAllProducts = createAsyncThunk(
     "product/fetchAllProducts",
-    async (_, thunkAPI) => {
+    async ( productData, thunkAPI) => {
         try {
             const req = await fetch("http://localhost:3500/product/all-products",
                 {
@@ -14,8 +14,7 @@ export const fetchAllProducts = createAsyncThunk(
             )
 
             const res = await req.json()
-            console.log(res)
-            return res
+            return res.products
 
         }
         catch (err) {
@@ -37,7 +36,6 @@ export const fetchProductDetail = createAsyncThunk(
             )
 
             const res = await req.json()
-            console.log(res)
             return res
 
         }
@@ -89,9 +87,6 @@ const productSlice = createSlice({
 })
 
 
-export default productSlice.reducer
-
-
 // const productSlice = createSlice({
 //     name: "product",
 //     initialState: initialState,
@@ -107,3 +102,5 @@ export default productSlice.reducer
 //     }
 // })
 
+// export const {setProduct, setSearchTerm} = productSlice.actions
+export default productSlice.reducer

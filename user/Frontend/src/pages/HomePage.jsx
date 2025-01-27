@@ -14,11 +14,8 @@ import TitleComponent from "../components/TitleComponent"
 import Footer from "../components/Footer"
 
 function HomePage() {
-  const dispatch = useDispatch()
   
   const { products } = useSelector(state => state.product)
-
-
   const groupedProducts = products.reduce((acc, product) => {
     if (!acc[product.category]) {
       acc[product.category] = [];
@@ -70,7 +67,7 @@ function HomePage() {
             <TitleComponent title={category} />
             <div className="category-items">
               {groupedProducts[category].map(product => (
-                <ItemCard key={product.id} name={product.name} image={product.image} price={product.price} id={product.id} />
+                <ItemCard key={product._id} name={product.name} image={product.image} price={product.price} id={product._id} />
               ))}
             </div>
           </div>
