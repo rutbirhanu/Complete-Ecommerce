@@ -25,11 +25,11 @@ export const addToCart = createAsyncThunk(
     }
 )
 
-export const removeFromCart = createAsyncThunk(
-    "cart/removeFromCart",
+export const updateCart = createAsyncThunk(
+    "cart/updateCart",
     async (cartData, thunkAPI) => {
         try {
-            const req = await fetch("http://localhost:3500/cart/remove-from-cart",
+            const req = await fetch("http://localhost:3500/cart/update-cart",
                 {
                     method: "POST",
                     headers: {
@@ -48,57 +48,6 @@ export const removeFromCart = createAsyncThunk(
         }
     }
 )
-
-export const increaseQuantity = createAsyncThunk(
-    "cart/increaseQuantity",
-    async(itemId, thunkAPI)=> {
-    try {
-        const req = await fetch("http://localhost:3500/cart/increase-quantity",
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify(itemId)
-            }
-        )
-        const res = await req.json()
-        console.log(res)
-        return res
-
-    }
-    catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.error)
-    }
-    }
-)
-
-
-export const decreaseQuantity = createAsyncThunk(
-    "cart/decreaseQuantity",
-    async(itemId, thunkAPI)=> {
-    try {
-        const req = await fetch("http://localhost:3500/cart/decrease-quantity",
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify(itemId)
-            }
-        )
-        const res = await req.json()
-        console.log(res)
-        return res
-
-    }
-    catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.error)
-    }
-    }
-)
-
-
 
 let initialState = {
     products: [],
@@ -123,35 +72,6 @@ const cartSlice = createSlice({
             })
             .addCase(addToCart.rejected, state => {
                 state.error= true
-            })
-            .addCase(removeFromCart.pending, state => {
-                state.isPending = true
-                state.error= false
-            })
-            .addCase(removeFromCart.fulfilled, (state, action) => {
-                state.products = action.payload
-                state.isPending = false
-                state.error = false
-                // state.totalPrice,
-                // state.totalQuantity,
-            })
-            .addCase(removeFromCart.rejected, state => {
-                state.error = true
-                state.isPending = false
-            })
-            .addCase(increaseQuantity.pending, state => {
-                state.isPending = true
-                state.error= false
-            })
-            .addCase(increaseQuantity.fulfilled, (state, action) => {
-                state.isPending = false
-                state.error = false
-                // state.totalPrice,
-                // state.totalQuantity,
-            })
-            .addCase(increaseQuantity.error, state => {
-                state.error = true
-                state.isPending = false
             })
     }
 })
