@@ -91,11 +91,9 @@ function DetailsPage() {
         <div className="similar-items">
           {
             similarProducts
-              .filter(item => item.id !== id) // Exclude the selected item
+              .filter(item => item._id !== id) // Exclude the selected item
               .map(item => (
-                // <Link to={`/details/${item.id}`} key={item.id}>
-                  <ItemCard id={item.id} key={item.id} name={item.name} image={item.image} price={item.price} />
-                // </Link>
+                  <ItemCard id={item._id} key={item.id} name={item.name} image={item.image} price={item.price} />
               ))
           }
         </div>

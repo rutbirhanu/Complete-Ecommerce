@@ -34,9 +34,6 @@ app.use("/product", productRoute)
 
 
 
-
-
-
 connectDB(process.env.MONGODB_CONNECTION)
 app.listen(3500, () => {
     console.log("server has started")
