@@ -53,12 +53,29 @@ export const updateCart = createAsyncThunk(
 export const fetchUserCart = createAsyncThunk(
     "cart/fetchUserCart",
     async (userId, thunkAPI) => {
-        
+        try {
+            const req = await fetch("http://localhost:3500/cart/get-user-cart",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({userId})
+                }
+            )
+
+            const res = await req.json()
+            console.log(res)
+            return res
+        }
+        catch (err) {
+            return thunkAPI.rejectWithValue(err.response.data.error)
+        }
     }
 )
 
 let initialState = {
-    products: [],
+    products: {},
     totalPrice: 0,
     totalQuantity: 0,
     isPending: false,

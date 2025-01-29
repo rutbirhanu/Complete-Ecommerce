@@ -12,24 +12,24 @@ function CartPage() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const makePayment = async() => {
+  const makePayment = async () => {
     const stripe = await loadStripe(import.meta.env.VITE_API_STRIPE_PUBLISHABLE_KEY)
     const response = await fetch("http://localhost:3500/order/checkout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      credentials:"include",
-      body:JSON.stringify({total:totalPrice, address:"ethiopia", items:products})
+      credentials: "include",
+      body: JSON.stringify({ total: totalPrice, address: "ethiopia", items: products })
     })
 
     const session = await response.json()
     const result = await stripe.redirectToCheckout({
-      sessionId:session.id
+      sessionId: session.id
     })
     console.log(products)
   }
-  
+
   return (
     <div className="cart-page-container">
       <div className="cart-card">
@@ -41,19 +41,30 @@ function CartPage() {
                 <div className="col align-self-center text-right text-muted">{totalQuantity} items</div>
               </div>
             </div>
-            {
+            {/* {
               products.map(product => (
                 <CartItemCard key={product._id} name={product.name} id={product._id} quantity={product.quantity} price={product.price} image={product.image} />
-                // console.log(product)
               ))
             }
-         
-            <div className="back-to-shop" onClick={()=>navigate("/")}><a href="#">&larr;</a><span className="text-muted">Back to Shop</span></div>
+          */}
+            {
+              Object.values(products).map((product) => (
+                <CartItemCard
+                  key={product._id}
+                  name={product.name}
+                  id={product._id}
+                  quantity={product.quantity}
+                  price={product.price}
+                  image={product.image}
+                />
+              ))
+            }
+            <div className="back-to-shop" onClick={() => navigate("/")}><a href="#">&larr;</a><span className="text-muted">Back to Shop</span></div>
           </div>
           <div className="col-md-4 summary">
             <div><h5><b>Summary</b></h5></div>
             <hr />
-          
+
             <form>
               <p>SHIPPING</p>
               <select><option className="text-muted">Standard-Delivery- 5.00 $</option></select>
@@ -64,7 +75,7 @@ function CartPage() {
               <div className="col">TOTAL PRICE</div>
               <div className="col text-right">{totalPrice} $</div>
             </div>
-            <ButtonComponent desc="Checkout" onclick={makePayment}/>
+            <ButtonComponent desc="Checkout" onclick={makePayment} />
           </div>
         </div>
 
