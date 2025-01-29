@@ -31,20 +31,6 @@ function DetailsPage() {
     setShowSnackBar(false);
   };
 
-  const addToCartAsync = async (itemId) => {
-    const res = await fetch("http://localhost:3500/cart/add-to-cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials:"include",
-      body:JSON.stringify({itemId})
-    }
-    )
-    const response = await res.json()
-    console.log(response)
-}
-
   const similarProducts = products.filter(item => item.category === product.category)
 
   return (
@@ -79,8 +65,7 @@ function DetailsPage() {
             </div>
             <ButtonComponent desc="Add to Cart" onclick={async() => {
               setShowSnackBar(true)
-              dispatch(addToCart(product))
-               await addToCartAsync(product.id)
+              dispatch(addToCart(id))
             }} />
 
           </div>

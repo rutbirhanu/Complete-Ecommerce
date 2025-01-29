@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
 export const addToCart = createAsyncThunk(
     "cart/addToCart",
-    async (cartData, thunkAPI) => {
+    async (itemId, thunkAPI) => {
         try {
             const req = await fetch("http://localhost:3500/cart/add-to-cart",
                 {
@@ -11,7 +11,7 @@ export const addToCart = createAsyncThunk(
                     headers: {
                         "Content-Type":"application/json"
                     },
-                    body:JSON.stringify(cartData)
+                    body: JSON.stringify({ itemId })
                 }
             )
 
@@ -49,6 +49,14 @@ export const updateCart = createAsyncThunk(
     }
 )
 
+
+export const fetchUserCart = createAsyncThunk(
+    "cart/fetchUserCart",
+    async (userId, thunkAPI) => {
+        
+    }
+)
+
 let initialState = {
     products: [],
     totalPrice: 0,
@@ -66,12 +74,38 @@ const cartSlice = createSlice({
             .addCase(addToCart.pending, state => {
                     state.isPending= true
             })
-            .addCase(addToCart.fulfilled, (state, action) => {
-                state.products = action.payload
+            .addCase(addToCart.fulfilled, (state) => {
                 state.isPending = false
+                state.error= false
             })
             .addCase(addToCart.rejected, state => {
-                state.error= true
+                state.error = true
+                state.isPending = false
+            })
+
+            .addCase(updateCart.pending, state => {
+                    state.isPending= true
+            })
+            .addCase(updateCart.fulfilled, (state) => {
+                state.isPending = false
+                state.error= false
+            })
+            .addCase(updateCart.rejected, state => {
+                state.error = true
+                state.isPending = false
+            })
+
+            .addCase(fetchUserCart.pending, state => {
+                    state.isPending= true
+            })
+            .addCase(fetchUserCart.fulfilled, (state, action) => {
+                state.isPending = false
+                state.products= action.payload
+                state.error= false
+            })
+            .addCase(fetchUserCart.rejected, state => {
+                state.error = true
+                state.isPending = false
             })
     }
 })

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import 'bootstrap/dist/css/bootstrap.css';
 import { useDispatch } from "react-redux"
-import { decreaseQuantity, increaseQuantity, removeFromCart } from '../redux/cartSlice';
+import { updateCart } from '../redux/cartSlice';
 
 function CartItemCard({ name, price, quantity, image, id }) {
     const dispatch = useDispatch()
@@ -15,9 +15,9 @@ function CartItemCard({ name, price, quantity, image, id }) {
                     {/* <div className="row">Cotton T-shirt</div> */}
                 </div>
                 <div className="col">
-                    <a href="#" onClick={() => (dispatch(decreaseQuantity(id)))} >-</a><a href="#" className="border text-muted" style={{ fontSize: "13px" }}>{quantity}</a><a href="#" onClick={() => { dispatch(increaseQuantity(id)) }}>+</a>
+                    <a href="#" onClick={() => (dispatch(updateCart({itemId:id, quantity:1 })))} >-</a><a href="#" className="border text-muted" style={{ fontSize: "13px" }}>{quantity}</a><a href="#" onClick={() => { dispatch(updateCart({itemId:id, quantity:1 })) }}>+</a>
                 </div>
-                <div className="col text-muted">{price} $<span className="close" onClick={() => (dispatch(removeFromCart(id)))}>&#10005;</span></div>
+                <div className="col text-muted">{price} $<span className="close" onClick={() => (dispatch(updateCart({itemId:id, quantity:0})))}>&#10005;</span></div>
             </div>
         </div>
     )

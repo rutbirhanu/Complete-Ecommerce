@@ -28,7 +28,8 @@ const addToCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
-    const { itemId, userId, quantity } = req.body
+    const {userId} = req.user
+    const { itemId, quantity } = req.body
     const user = await userModel.findById(userId)
     let cartData = await user.cartData
     cartData[itemId] = quantity

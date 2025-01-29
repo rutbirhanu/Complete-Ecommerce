@@ -44,6 +44,7 @@ function CartPage() {
             {
               products.map(product => (
                 <CartItemCard key={product._id} name={product.name} id={product._id} quantity={product.quantity} price={product.price} image={product.image} />
+                // console.log(product)
               ))
             }
          
