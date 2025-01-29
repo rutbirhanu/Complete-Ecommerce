@@ -49,19 +49,6 @@ const updateCart = async (req, res) => {
 }
 
 
-// const getUserCart = async (req, res) => {
-//   try {
-//     const {userId}=req.body
-//     const user = await userModel.findById(userId)
-//     res.status(200).json({data:user.cartData, message:"cart data fetched successfully"})
-//   }
-//   catch (err) {
-//     res.status(500).json(err.message)
-//   }
-// }
-
-
-
 const getUserCart = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -97,6 +84,18 @@ const getUserCart = async (req, res) => {
   }
 };
 
+
+
+// const getUserCart = async (req, res) => {
+//   try {
+//     const {userId}=req.body
+//     const user = await userModel.findById(userId)
+//     res.status(200).json({data:user.cartData, message:"cart data fetched successfully"})
+//   }
+//   catch (err) {
+//     res.status(500).json(err.message)
+//   }
+// }
 
 
 module.exports = { getUserCart, updateCart, addToCart}
