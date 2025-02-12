@@ -9,6 +9,10 @@
     font-weight: 400;
 }
 
+
+
+
+
 .side-bar-container {
     flex: 0 11em;
     min-width: 11em;
@@ -55,6 +59,11 @@
 .side-bar-container div {
     margin: 3em 0;
 }
+
+
+
+
+
 
 .info-card-container h4, h2 {
     margin: 6px;
