@@ -10,7 +10,7 @@ function SideBarComponent() {
         <Link to="/customers" className="nav-link"><FaUsers /> <span>Users</span></Link>
         <Link to="/products" className="nav-link"><FaBoxOpen /> <span>Products</span></Link>
         <Link to="/orders" className="nav-link"><FaShoppingCart /> <span>Orders</span></Link>
-        <div className="nav-link inactive-link"><FaUserCircle /> <span>Customers</span></div>
+        <Link to="/customers" className="nav-link inactive-link"><FaUserCircle /> <span>Customers</span></Link>
       </div>
     </div>
   );

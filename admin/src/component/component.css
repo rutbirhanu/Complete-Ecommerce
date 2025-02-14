@@ -52,13 +52,12 @@
   
   .nav-link:hover,
   .inactive-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+    background-color: rgb(29, 59, 123);
     cursor: pointer;
   }
   
   .nav-link:active {
-    background-color: #4c04b9;
+    background-color: rgb(29, 59, 123);
   }
   
   .inactive-link {
