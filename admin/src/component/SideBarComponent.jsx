@@ -1,13 +1,15 @@
 import "./component.css"
+import { Link } from 'react-router-dom';
+
 
 function SideBarComponent() {
   return (
       <div className="side-bar-container">
           <h2>Dashboard</h2>
           <div>
-              <p>Users</p>
-              <p>Products</p>
-              <p>Orders</p>
+              <Link to="/customers"><p>Users</p></Link>
+             <Link to="/products"><p>Products</p></Link> 
+              <Link to ="/orders"><p>Orders</p></Link>
               <p>Customers</p>
           </div>
     </div>
