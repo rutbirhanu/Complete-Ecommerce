@@ -17,13 +17,14 @@ function ProductsList() {
     },[])
 
     return (
-        <div className="customer-page-container">
+        <div className="orders-page-container">
             <SideBarComponent />
-            <div className="customers-page-content">
+            <div className="orders-page-content">
                 <h1>Products</h1>
                 <InfoCard />
-                <div className="products-list">
-                    <table>
+                <div className="orders-table-wrapper">
+                    <div className="table-wrapper">
+                    <table className="orders-table">
                         <thead>
                         <tr>
                             <th>Id</th>
@@ -74,7 +75,8 @@ function ProductsList() {
                                 <MdEdit style={{ color: "blue", height: "1.4em", width: "1.2em", marginLeft: "15px" }} />
                             </td>
                         </tr> */}
-                    </table>
+                        </table>
+                        </div>
                 </div>
             </div>
         </div>
