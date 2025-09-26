@@ -1,44 +1,4 @@
 
-.category-card img {
-    height: 310px;
-    width: 290px;
-    border-radius: 4px;
-}
-
-.category-card {
-    position: relative;
-    margin: 0.2rem 0.7rem;
-   
-}
-
-.category-card p {
-    font-family: Averta, sans-serif;
-    font-weight: 400;
-}
-
-.category-card h5 {
-    font-family: Averta, sans-serif;
-    font-weight: 700;
-    font-size: 1.4rem;
-}
-
-.category-card-overlay {
-    position: absolute;
-    top: 17px;
-    left: 15px;
-    transition:background-color 0.4s ease-in-out, top 0.4s ease-in-out, left 0.4s ease-in-out;
-}
-
-.category-card:hover .category-card-overlay {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    height: 99%;
-    width: 99%;
-    background-color: rgba(255, 255, 255, 0.4);
-    cursor: pointer;
-}
-
 .category-card-container1 {
     display: flex;
     align-items: center;
@@ -58,85 +18,6 @@
 .category-card-container2::-webkit-scrollbar {
     width: 0;
 }
-
-
-
-.right-side-nav>* {
-    margin: 21px;
-}
-
-
-.button-container {
-    background-color: rgb(78, 114, 213);
-    height: 2.5rem;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2em 10px;
-    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
-}
-
-.button-container:hover {
-    cursor: pointer;
-}
-
-.button-container button {
-    border: none;
-    outline: none;
-    background-color: transparent;
-    color: white;
-    font-size: 18px;
-    font-weight: 500;
-}
-
-
-.toast-container {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    border: 1px solid green;
-    height: 40px;
-    width: 300px;
-    display: flex;
-    align-items: center;
-    border-radius: 5px;
-    background-color: white;
-    box-shadow: 0 0 2px 2px rgb(209, 209, 209);
-}
-
-.toast-container span {
-    padding: 0 10px;
-}
-
-.toast-container::after {
-    content: "";
-    height: 3px;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background-color: green;
-    animation: slideOut 5s linear forwards;
-}
-
-@keyframes slideOut {
-    100% {
-        width: 0;
-    }
-}
-
-
-
-@media only screen and (max-width:950px) {
-   
-    .item-card-parent-container {
-        height: 11em;
-        width: 8em;
-        margin: 8px 5px;
-    }
-}
-
 
 
 
@@ -238,8 +119,8 @@
     font-size: 1.3rem;
 } */
 
-
-/* .item-card-parent-container {
+/* 
+.item-card-parent-container {
     height: 11em;
     width: 9.5em;
     display: flex;
@@ -283,6 +164,111 @@
 
 
 /* 
+.button-container {
+    background-color: rgb(78, 114, 213);
+    height: 2.5rem;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2em 10px;
+    box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
+}
+
+.button-container:hover {
+    cursor: pointer;
+}
+
+.button-container button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+} */
+
+
+/* .category-card img {
+    height: 310px;
+    width: 290px;
+    border-radius: 4px;
+}
+
+.category-card {
+    position: relative;
+    margin: 0.2rem 0.7rem;
+   
+}
+
+.category-card p {
+    font-family: Averta, sans-serif;
+    font-weight: 400;
+}
+
+.category-card h5 {
+    font-family: Averta, sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.category-card-overlay {
+    position: absolute;
+    top: 17px;
+    left: 15px;
+    transition:background-color 0.4s ease-in-out, top 0.4s ease-in-out, left 0.4s ease-in-out;
+}
+
+.category-card:hover .category-card-overlay {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    height: 99%;
+    width: 99%;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+ */
+
+
+
+ /* .toast-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    border: 1px solid green;
+    height: 40px;
+    width: 300px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 0 2px 2px rgb(209, 209, 209);
+}
+
+.toast-container span {
+    padding: 0 10px;
+}
+
+.toast-container::after {
+    content: "";
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: green;
+    animation: slideOut 5s linear forwards;
+}
+
+@keyframes slideOut {
+    100% {
+        width: 0;
+    }
+}
+ */
+
+
 .footer {
     background-color: rgb(37, 43, 96);
     color: white;
@@ -333,4 +319,4 @@
 
 .footer-column ul li a:hover {
     color: #f39c12;
-} */
+}

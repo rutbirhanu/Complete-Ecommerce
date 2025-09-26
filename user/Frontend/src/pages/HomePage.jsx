@@ -41,7 +41,7 @@ function HomePage() {
       <br />
 
       {/* Category card container 1 */}
-      <div className="my-12 flex items-center overflow-x-auto scrollbar-hide">
+      <div className="my-12 flex items-center justify-evenly overflow-x-auto scrollbar-hide">
         <CategoryCard
           imgSource="https://i.mdel.net/oftheminute/images/2019/08/stas_55_04.jpg"
           category="Women"
@@ -65,7 +65,7 @@ function HomePage() {
       </div>
 
       {/* Category card container 2 */}
-      <div className="my-12 flex items-center overflow-x-auto scrollbar-hide">
+      <div className="my-12 flex items-center justify-evenly overflow-x-auto scrollbar-hide">
         <CategoryCard
           imgSource="https://www.modelsdirectblog.com/wp-content/uploads/2020/11/shutterstock_1121333510.jpg"
           category="Sports"

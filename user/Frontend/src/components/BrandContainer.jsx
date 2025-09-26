@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-// import "./components.css"
 
 function BrandContainer({ imgSource }) {
   return (
