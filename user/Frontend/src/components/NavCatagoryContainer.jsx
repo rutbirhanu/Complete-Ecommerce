@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
-import "./components.css"
+// import "./components.css"
 
-function NavCatagoryContainer({imgSource, category}) {
+function NavCatagoryContainer({ imgSource, category }) {
   return (
-      <div className="nav-catagory-container">
-          <img src={imgSource} height="23px" />
-          <small>{category}</small>
+    <div className="flex flex-col items-center justify-center">
+      <img src={imgSource} className="h-6" alt={category} />
+      <small className="font-medium text-[13px] text-[#222222] outline-none font-sans">
+        {category}
+      </small>
     </div>
-  )
+  );
 }
 
 

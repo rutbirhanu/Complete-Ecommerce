@@ -14,6 +14,7 @@ export const fetchAllProducts = createAsyncThunk(
             )
 
             const res = await req.json()
+            console.log(res.products)
             return res.products
 
         }
