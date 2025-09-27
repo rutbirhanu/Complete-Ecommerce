@@ -1,17 +1,11 @@
-/* Importing fonts from Google */
+Importing fonts from Google
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-/* Reseting */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* font-family: 'Poppins', sans-serif; */
 }
-
-/* body {
-    background: #ecf0f3;    
-} */
 
 .wrapper {
     max-width: 400px;
@@ -55,7 +49,6 @@
     font-size: 1rem;
     color: #666;
     padding: 10px 15px 10px 10px;
-    /* border: 1px solid red; */
 }
 
 .wrapper .form-field {
@@ -138,29 +131,6 @@
     z-index: 4;
     background: #ecf0f3;
 }
-
-.google-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 37px;
-    border-radius: 5px;
-    margin: 0 0 30px 15px;
-    box-shadow: 3px 3px 3px #b1b1b1,
-        -3px -3px 3px #fff;
-    max-width: 300px;
-}
-
-.google-btn button {
-    border: none;
-    outline: none;
-    padding: 10px 20px;
-    color: black;
-    font-size: 15px;
-    font-weight: 500;
-    background-color: transparent;
-}
-
 
 
 @media(max-width: 380px) {
