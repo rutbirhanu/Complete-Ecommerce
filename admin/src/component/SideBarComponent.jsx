@@ -1,16 +1,37 @@
-import "./component.css"
 import { Link } from 'react-router-dom';
 import { FaUsers, FaBoxOpen, FaShoppingCart, FaUserCircle } from 'react-icons/fa';
 
+
 function SideBarComponent() {
   return (
-    <div className="side-bar-container">
-      <h2 className="logo-title">🧾 MyDashboard</h2>
-      <div className="nav-links">
-        <Link to="/customers" className="nav-link"><FaUsers /> <span>Users</span></Link>
-        <Link to="/products" className="nav-link"><FaBoxOpen /> <span>Products</span></Link>
-        <Link to="/orders" className="nav-link"><FaShoppingCart /> <span>Orders</span></Link>
-        <Link to="/customers" className="nav-link inactive-link"><FaUserCircle /> <span>Customers</span></Link>
+    <div className="w-[12em] h-screen sticky top-0 flex flex-col gap-8 p-6 bg-gradient-to-b from-[#1f1f2e] to-[#12121a] text-white shadow-[2px_0_8px_rgba(0,0,0,0.3)]">
+      <h2 className="text-xl font-bold text-center">🧾 MyDashboard</h2>
+
+      <div className="flex flex-col gap-4">
+        <Link
+          to="/customers"
+          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl hover:bg-[#1d3b7b] transition-all duration-300"
+        >
+          <FaUsers /> <span>Users</span>
+        </Link>
+        <Link
+          to="/products"
+          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl hover:bg-[#1d3b7b] transition-all duration-300"
+        >
+          <FaBoxOpen /> <span>Products</span>
+        </Link>
+        <Link
+          to="/orders"
+          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl hover:bg-[#1d3b7b] transition-all duration-300"
+        >
+          <FaShoppingCart /> <span>Orders</span>
+        </Link>
+        <Link
+          to="/customers"
+          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl opacity-60 cursor-not-allowed"
+        >
+          <FaUserCircle /> <span>Customers</span>
+        </Link>
       </div>
     </div>
   );

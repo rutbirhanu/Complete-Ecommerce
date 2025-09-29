@@ -1,6 +1,5 @@
 import { useState } from "react";
 import SideBarComponent from "../component/SideBarComponent";
-import "./addProduct.css";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -45,49 +44,103 @@ function AddProduct() {
   };
 
   return (
-    <div className="add-product-container">
+    <div className="flex min-h-screen bg-[#f4f5f7] font-['Segoe_UI',sans-serif]">
+      {/* Sidebar */}
       <SideBarComponent />
-      <main className="main-content">
-        <div className="main-header">
-          <h2>Add a New Product</h2>
+
+      {/* Main content */}
+      <main className="flex-grow px-12 py-8">
+        {/* Header */}
+        <div className="flex justify-center items-center mb-8">
+          <h2 className="text-[1.6rem] text-[#1d3b7b] font-semibold">
+            Add a New Product
+          </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="product-form">
-          <div className="form-left">
-            <div className="form-group">
-              <label>Product Name</label>
-              <input type="text" name="name" value={formData.name} onChange={handleOnChange} />
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-wrap gap-12 bg-white rounded-lg shadow-md p-8"
+        >
+          {/* Left side */}
+          <div className="flex-1 min-w-[300px]">
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">
+                Product Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleOnChange}
+                className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20"
+              />
             </div>
 
-            <div className="form-group">
-              <label>Description</label>
-              <textarea name="description" value={formData.description} onChange={handleOnChange}></textarea>
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleOnChange}
+                className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20 resize-none min-h-[100px]"
+              ></textarea>
             </div>
 
-            <div className="form-group">
-              <label>Category</label>
-              <input type="text" name="category" value={formData.category} onChange={handleOnChange} />
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">Category</label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleOnChange}
+                className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20"
+              />
             </div>
 
-            <div className="form-group">
-              <label>Price ($)</label>
-              <input type="number" name="price" value={formData.price} onChange={handleOnChange} />
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">Price ($)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleOnChange}
+                className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20"
+              />
             </div>
           </div>
 
-          <div className="form-right">
-            <div className="form-group">
-              <label>Upload Image</label>
-              <input type="file" name="image" accept="image/*" onChange={handleOnChange} />
+          {/* Right side */}
+          <div className="flex-1 min-w-[300px]">
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">
+                Upload Image
+              </label>
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleOnChange}
+                className="block w-full text-sm text-gray-600 border border-gray-300 p-2  rounded-lg cursor-pointer focus:outline-none"
+              />
             </div>
 
             {previewImage && (
-              <div className="image-preview">
-                <img src={previewImage} alt="Preview" />
+              <div className="mt-6 overflow-hidden rounded-lg h-[200px] border-2 border-gray-300 flex justify-center items-center bg-gray-50">
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  className="w-full h-full object-cover rounded-lg"
+                />
               </div>
             )}
 
-            <button className="submit-btn" type="submit">
+            <button
+              type="submit"
+              className="mt-8 w-full bg-[#5b8cf5] hover:bg-[#1d3b7b] text-white py-3 rounded-lg font-semibold shadow-md transition-colors"
+            >
               Add Product
             </button>
           </div>
