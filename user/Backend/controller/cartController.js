@@ -6,7 +6,7 @@ const addToCart = async (req, res) => {
   try {
     const { userId } = req.user
 
-    const {itemId} = req.body
+    const { itemId } = req.body
     const user = await userModel.findById(userId)
     let cartData = await user.cartData
 
@@ -28,15 +28,15 @@ const addToCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
-    const {userId} = req.user
+    const { userId } = req.user
     const { itemId, quantity } = req.body
     const user = await userModel.findById(userId)
     let cartData = await user.cartData
     cartData[itemId] = quantity
 
     if (cartData[itemId] <= 0) {
-        delete cartData[itemId];
-      }
+      delete cartData[itemId];
+    }
 
     await userModel.findByIdAndUpdate(userId, { cartData })
     res.status(200).json("cart updated successfully")
@@ -97,7 +97,7 @@ const getUserCart = async (req, res) => {
 // }
 
 
-module.exports = { getUserCart, updateCart, addToCart}
+module.exports = { getUserCart, updateCart, addToCart }
 
 
 
@@ -113,7 +113,7 @@ module.exports = { getUserCart, updateCart, addToCart}
 //       cartData[itemId]+=1
 //     }
 //     await userModel.findByIdAndUpdate(userId,{cartData})
-//    res.status(200).json("item amount incremented") 
+//    res.status(200).json("item amount incremented")
 
 //   }
 //   catch(err){
@@ -131,7 +131,7 @@ module.exports = { getUserCart, updateCart, addToCart}
 //       cartData[itemId]-=1
 //     }
 //     await userModel.findByIdAndUpdate(userId,{cartData})
-//    res.status(200).json("item amount incremented") 
+//    res.status(200).json("item amount incremented")
 
 //   }
 //   catch(err){

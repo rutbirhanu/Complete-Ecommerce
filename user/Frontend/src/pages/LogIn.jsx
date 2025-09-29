@@ -22,17 +22,25 @@ function LogIn() {
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    dispatch(login(formValue))
+    const resultAction = await dispatch(login(formValue))
 
     const response = await fetch("http://localhost:3500/product/notification", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+
     })
     const userData = await response.json()
     console.log(userData.message.notification)
-    navigate("/")
+
+    if (login.fulfilled.match(resultAction)) {
+      navigate("/")
+    }
+    if (login.rejected.match(resultAction)) {
+      alert("Login failed. Please check your credentials and try again.")
+    }
+
   }
 
 
@@ -45,7 +53,7 @@ function LogIn() {
         headers: {
           "Content-Type": "application/json",
           Authorization: token
-        }
+        },
         // credentials:"include"
       }
       )
