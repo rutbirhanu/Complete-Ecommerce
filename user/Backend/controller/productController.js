@@ -92,13 +92,16 @@ const fetchSingleProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const { name, category, brand, price, description } = req.body
+        console.log("pass pass")
         const image = req.file
         if (!image) {
             return res.status(404).json("images not found")
         }
         const imageUrl = req.file.path;
+        console.log(imageUrl)
         const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl })
         // await sendNotification(req, res)
+        console.log("product created")
         res.status(201).json("product created")
     }
     catch (err) {
@@ -112,17 +115,16 @@ const updateProduct = async (req, res) => {
         const { name, category, brand, price, description, image } = req.body
 
         if (req.file) {
-            // Assuming req.file contains the image uploaded via Multer
             const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'uploads', // Cloudinary folder
+                folder: 'uploads', 
             });
-            image = result.secure_url; // Store the image URL in the updated data
+            image = result.secure_url; 
         }
         
         const updatedProduct = await productSchema.findByIdAndUpdate(
             productId,
             { name, category, brand, price, description, image },
-            { new: true }  // option to return the updated document
+            { new: true }  
         );
 
         if (!updatedProduct) {

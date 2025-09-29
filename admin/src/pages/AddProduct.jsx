@@ -1,5 +1,7 @@
 import { useState } from "react";
 import SideBarComponent from "../component/SideBarComponent";
+import { useDispatch } from "react-redux";
+import { addProduct} from "../redux/productSlice";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -7,8 +9,11 @@ function AddProduct() {
     description: "",
     price: "",
     category: "",
+    brand:"",
     image: ""
   });
+
+  const dispatch = useDispatch()
 
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -31,38 +36,25 @@ function AddProduct() {
       formDataToSend.append(key, value);
     });
 
-    try {
-      const res = await fetch("http://localhost:3500/product/add-product", {
-        method: "POST",
-        body: formDataToSend,
-      });
-      const data = await res.json();
-      console.log(data);
-    } catch (err) {
-      console.error("Failed to add product:", err);
-    }
+    dispatch(addProduct(formDataToSend))
+
   };
 
   return (
     <div className="flex min-h-screen bg-[#f4f5f7] font-['Segoe_UI',sans-serif]">
-      {/* Sidebar */}
       <SideBarComponent />
 
-      {/* Main content */}
       <main className="flex-grow px-12 py-8">
-        {/* Header */}
         <div className="flex justify-center items-center mb-8">
           <h2 className="text-[1.6rem] text-[#1d3b7b] font-semibold">
             Add a New Product
           </h2>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-wrap gap-12 bg-white rounded-lg shadow-md p-8"
         >
-          {/* Left side */}
           <div className="flex-1 min-w-[300px]">
             <div className="flex flex-col mb-6">
               <label className="font-medium mb-2 text-gray-500">
@@ -95,6 +87,18 @@ function AddProduct() {
                 type="text"
                 name="category"
                 value={formData.category}
+                onChange={handleOnChange}
+                className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20"
+              />
+            </div>
+
+
+            <div className="flex flex-col mb-6">
+              <label className="font-medium mb-2 text-gray-500">Brand</label>
+              <input
+                type="text"
+                name="brand"
+                value={formData.brand}
                 onChange={handleOnChange}
                 className="p-2 border border-gray-300 rounded-lg text-gray-800 focus:border-[#1d3b7b] focus:outline-none focus:ring-2 focus:ring-[#5a6e75]/20"
               />

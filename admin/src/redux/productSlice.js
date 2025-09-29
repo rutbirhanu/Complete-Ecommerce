@@ -2,16 +2,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 export const addProduct = createAsyncThunk(
-    async (product, thunkAPI) => {
+    async (productFormData, thunkAPI) => {
         try {
             const req = await fetch("http://localhost:3500/product/add-product", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(product)
+                body: productFormData
             })
             const response = await req.json()
+            console.log(response)
             return response
         }
         catch (err) {
@@ -30,7 +28,7 @@ export const fetchProduct = createAsyncThunk(
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
-                    }
+                    },
                 }
             )
             const response = await request.json()
@@ -63,6 +61,18 @@ const productSlice = createSlice({
             .addCase(fetchProduct.rejected, (state, action) => {
                 state.error = action.payload
             })
+
+            .addCase(addProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addProduct.fulfilled, (state, action) => {
+                state.isLoading = false;
+                // state.products.push(action.payload);
+            })
+            .addCase(addProduct.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            });
     }
 })
 

@@ -1,4 +1,3 @@
-import "./pages/addProduct.css"
 import { Route, Routes } from 'react-router-dom'
 import AddProduct from './pages/AddProduct'
 import CustomersPage from "./pages/CustomersPage"
