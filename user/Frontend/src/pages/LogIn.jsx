@@ -24,15 +24,15 @@ function LogIn() {
     e.preventDefault()
     const resultAction = await dispatch(login(formValue))
 
-    const response = await fetch("http://localhost:3500/product/notification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+    // const response = await fetch("http://localhost:3500/product/notification", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
 
-    })
-    const userData = await response.json()
-    console.log(userData.message.notification)
+    // })
+    // const userData = await response.json()
+    // console.log(userData.message.notification)
 
     if (login.fulfilled.match(resultAction)) {
       navigate("/")

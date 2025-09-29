@@ -5,12 +5,18 @@ import CartItemCard from "../components/cartItemCard";
 import ButtonComponent from "../components/ButtonComponent";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
+import { useEffect } from "react";
+import { fetchUserCart } from "../redux/cartSlice";
 
 
 function CartPage() {
   const { products, totalQuantity, totalPrice } = useSelector(state => state.cart)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchUserCart())
+  }, [])
 
   const makePayment = async () => {
     const stripe = await loadStripe(import.meta.env.VITE_API_STRIPE_PUBLISHABLE_KEY)
@@ -48,7 +54,7 @@ function CartPage() {
             }
           */}
             {
-              Object.values(products).map((product) => (
+              products.map((product) => (
                 <CartItemCard
                   key={product._id}
                   name={product.name}
@@ -75,7 +81,7 @@ function CartPage() {
               <div className="col">TOTAL PRICE</div>
               <div className="col text-right">{totalPrice} $</div>
             </div>
-            <ButtonComponent desc="Checkout" onclick={makePayment} />
+            <ButtonComponent desc="Checkout" onclick={makePayment} showLoading={true} />
           </div>
         </div>
 

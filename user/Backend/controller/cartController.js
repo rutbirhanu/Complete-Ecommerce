@@ -1,5 +1,6 @@
 require("dotenv").config()
 const userModel = require("../model/user")
+const productModel = require("../model/product")
 
 
 const addToCart = async (req, res) => {
@@ -18,6 +19,7 @@ const addToCart = async (req, res) => {
       cartData[itemId] = 1
     }
     await userModel.findByIdAndUpdate(userId, { cartData })
+    console.log(cartData)
     res.status(200).json("added to cart")
   }
   catch (err) {
@@ -56,23 +58,21 @@ const getUserCart = async (req, res) => {
     const user = await userModel.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const cartData = user.cartData; // { itemId1: quantity1, itemId2: quantity2, ... }
-    const itemIds = Object.keys(cartData); // Extract item IDs
+    const cartData = user.cartData; 
+    const itemIds = Object.keys(cartData); 
 
     if (itemIds.length === 0) {
       return res.status(200).json({ data: [], message: "Cart is empty" });
     }
 
-    // Fetch product details for the items in the cart
     const products = await productModel.find({ _id: { $in: itemIds } });
 
-    // Merge product details with their respective quantities
     const detailedCart = products.map(product => ({
       _id: product._id,
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: cartData[product._id], // Get quantity from cartData
+      quantity: cartData[product._id], 
     }));
 
     res.status(200).json({ data: detailedCart, message: "Cart data fetched successfully" });

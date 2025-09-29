@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react"
 
-function ButtonComponent({ desc, onclick }) {
+function ButtonComponent({ desc, onclick, showLoading = false }) {
   const [text, setText] = useState(desc);
 
   const handleClick = () => {
-    setText("Loading ..."); 
+    if (showLoading) {
+      setText("Loading ...");
+    }
     if (onclick) {
-      onclick(); 
+      onclick();
     }
   };
 
@@ -23,4 +25,4 @@ function ButtonComponent({ desc, onclick }) {
   );
 }
 
-export default ButtonComponent
+export default ButtonComponent;

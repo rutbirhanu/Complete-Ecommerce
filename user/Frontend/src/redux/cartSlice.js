@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 export const addToCart = createAsyncThunk(
@@ -9,8 +9,9 @@ export const addToCart = createAsyncThunk(
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     },
+                    credentials: "include",
                     body: JSON.stringify({ itemId })
                 }
             )
@@ -33,9 +34,10 @@ export const updateCart = createAsyncThunk(
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     },
-                    body:JSON.stringify(cartData)
+                    credentials: "include",
+                    body: JSON.stringify(cartData)
                 }
             )
 
@@ -52,21 +54,21 @@ export const updateCart = createAsyncThunk(
 
 export const fetchUserCart = createAsyncThunk(
     "cart/fetchUserCart",
-    async (userId, thunkAPI) => {
+    async (thunkAPI) => {
         try {
             const req = await fetch("http://localhost:3500/cart/get-user-cart",
                 {
-                    method: "POST",
+                    method: "GET",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     },
-                    body:JSON.stringify({userId})
+                    credentials: "include",
                 }
             )
 
             const res = await req.json()
-            console.log(res)
-            return res
+
+            return res.data
         }
         catch (err) {
             return thunkAPI.rejectWithValue(err.response.data.error)
@@ -75,11 +77,11 @@ export const fetchUserCart = createAsyncThunk(
 )
 
 let initialState = {
-    products: {},
+    products: [],
     totalPrice: 0,
     totalQuantity: 0,
     isPending: false,
-    error:false
+    error: false
 }
 
 
@@ -89,11 +91,11 @@ const cartSlice = createSlice({
     extraReducers: builder => {
         builder
             .addCase(addToCart.pending, state => {
-                    state.isPending= true
+                state.isPending = true
             })
             .addCase(addToCart.fulfilled, (state) => {
                 state.isPending = false
-                state.error= false
+                state.error = false
             })
             .addCase(addToCart.rejected, state => {
                 state.error = true
@@ -101,11 +103,11 @@ const cartSlice = createSlice({
             })
 
             .addCase(updateCart.pending, state => {
-                    state.isPending= true
+                state.isPending = true
             })
             .addCase(updateCart.fulfilled, (state) => {
                 state.isPending = false
-                state.error= false
+                state.error = false
             })
             .addCase(updateCart.rejected, state => {
                 state.error = true
@@ -113,12 +115,15 @@ const cartSlice = createSlice({
             })
 
             .addCase(fetchUserCart.pending, state => {
-                    state.isPending= true
+                state.isPending = true
             })
             .addCase(fetchUserCart.fulfilled, (state, action) => {
                 state.isPending = false
-                state.products= action.payload
-                state.error= false
+                state.products = action.payload
+                state.totalQuantity = action.payload.reduce((sum, item) => sum + item.quantity, 0);
+                state.totalPrice = action.payload.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+                state.error = false
             })
             .addCase(fetchUserCart.rejected, state => {
                 state.error = true
