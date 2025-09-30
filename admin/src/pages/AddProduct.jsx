@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SideBarComponent from "../component/SideBarComponent";
 import { useDispatch } from "react-redux";
-import { addProduct} from "../redux/productSlice";
+import { addProduct } from "../redux/productSlice";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function AddProduct() {
     description: "",
     price: "",
     category: "",
-    brand:"",
+    brand: "",
     image: ""
   });
 
@@ -31,13 +31,15 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       formDataToSend.append(key, value);
     });
-
-    dispatch(addProduct(formDataToSend))
-
+    
+    dispatch(addProduct(formDataToSend)).unwrap()
+      .then((res) => console.log("Success:", res))
+      .catch((err) => console.error("Error:", err));
   };
 
   return (
