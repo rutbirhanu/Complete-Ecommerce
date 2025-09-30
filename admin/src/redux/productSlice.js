@@ -54,8 +54,18 @@ const productSlice = createSlice({
     initialState: {
         products: [],
         isLoading: false,
-        error: null
+        error: null,
+        success: false
     },
+
+    reducers: {
+        resetStatus: (state) => {
+            state.isLoading = false;
+            state.error = null;
+            state.success = false;
+        },
+    },
+
     extraReducers: (builder) => {
         builder
             .addCase(fetchProduct.pending, state => {
@@ -71,16 +81,19 @@ const productSlice = createSlice({
 
             .addCase(addProduct.pending, (state) => {
                 state.isLoading = true;
+                state.success = false;
             })
             .addCase(addProduct.fulfilled, (state) => {
                 state.isLoading = false;
-                // state.products.push(action.payload);
+                state.success = true;
             })
             .addCase(addProduct.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
+                state.success = false;
             });
     }
 })
 
+export const { resetStatus } = productSlice.actions;
 export default productSlice.reducer

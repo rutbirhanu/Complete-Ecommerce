@@ -92,7 +92,6 @@ const fetchSingleProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const { name, category, brand, price, description } = req.body
-        console.log("pass pass")
         const image = req.file
         if (!image) {
             return res.status(404).json("images not found")

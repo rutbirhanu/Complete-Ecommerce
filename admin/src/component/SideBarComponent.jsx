@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaUsers, FaBoxOpen, FaShoppingCart, FaUserCircle } from 'react-icons/fa';
+import {FaBoxOpen, FaShoppingCart, FaUserCircle } from 'react-icons/fa';
 
 
 function SideBarComponent() {
@@ -9,10 +9,10 @@ function SideBarComponent() {
 
       <div className="flex flex-col gap-4">
         <Link
-          to="/customers"
+          to="/"
           className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl hover:bg-[#1d3b7b] transition-all duration-300"
         >
-          <FaUsers /> <span>Users</span>
+          <FaBoxOpen/> <span>Add Product</span>
         </Link>
         <Link
           to="/products"
@@ -28,7 +28,7 @@ function SideBarComponent() {
         </Link>
         <Link
           to="/customers"
-          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl opacity-60 cursor-not-allowed"
+          className="flex items-center gap-3 text-base font-medium px-4 py-3 text-gray-200 rounded-xl"
         >
           <FaUserCircle /> <span>Customers</span>
         </Link>

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SideBarComponent from "../component/SideBarComponent";
-import { useDispatch } from "react-redux";
-import { addProduct } from "../redux/productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addProduct, resetStatus } from "../redux/productSlice";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -14,6 +14,17 @@ function AddProduct() {
   });
 
   const dispatch = useDispatch()
+  const { isLoading, error, success } = useSelector((state) => state.product);
+
+
+  useEffect(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        dispatch(resetStatus());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, error, dispatch]);
 
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -31,15 +42,12 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       formDataToSend.append(key, value);
     });
-    
-    dispatch(addProduct(formDataToSend)).unwrap()
-      .then((res) => console.log("Success:", res))
-      .catch((err) => console.error("Error:", err));
+
+    dispatch(addProduct(formDataToSend))
   };
 
   return (
@@ -145,10 +153,27 @@ function AddProduct() {
 
             <button
               type="submit"
-              className="mt-8 w-full bg-[#5b8cf5] hover:bg-[#1d3b7b] text-white py-3 rounded-lg font-semibold shadow-md transition-colors"
+              disabled={isLoading}
+              className={`mt-8 w-full py-3 rounded-lg font-semibold shadow-md transition-colors
+    ${isLoading
+                  ? "bg-gray-400 cursor-not-allowed text-white"
+                  : error
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : success
+                      ? "bg-green-500 hover:bg-green-600 text-white"
+                      : "bg-[#5b8cf5] hover:bg-[#1d3b7b] text-white"
+                }
+  `}
             >
-              Add Product
+              {isLoading
+                ? "Loading..."
+                : error
+                  ? "❌ Error, Try Again"
+                  : success
+                    ? "✅ Added!"
+                    : "Add Product"}
             </button>
+
           </div>
         </form>
       </main>
