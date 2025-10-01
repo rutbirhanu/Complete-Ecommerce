@@ -2,6 +2,9 @@ const productSchema = require("../model/product")
 const { getMessaging } = require("firebase-admin/messaging")
 const admin = require("firebase-admin")
 const cloudinary = require('cloudinary').v2;
+const redis = require("../config/redisClientConfig")
+
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Your Cloudinary cloud name
     api_key: process.env.CLOUDINARY_API_KEY,       // Your Cloudinary API key
