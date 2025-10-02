@@ -10,10 +10,10 @@ redis.on("error", (err) => console.error("Redis error ❌", err));
 
 module.exports = redis
 
-
+//see if elastic search support buy it with recommendation option
 
 
 // use redis for
-//     # product cache  -- cache the products
-//     #cart info cache  -- store whats in my cart for fast retrival
+//     #product cache  -- cache the products
+//   ??  #cart info cache  -- store whats in my cart for fast retrival
 //     #inventory/Stock -- Fast decrement/increment of stock when multiple people buy at once.
