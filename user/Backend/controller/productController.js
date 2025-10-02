@@ -102,15 +102,16 @@ const fetchSingleProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { name, category, brand, price, description } = req.body
+        const { name, category, brand, price, description,stock } = req.body
         const image = req.file
         if (!image) {
             return res.status(404).json("images not found")
         }
         const imageUrl = req.file.path;
         console.log(imageUrl)
-        const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl })
+        const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl,stock })
         // await sendNotification(req, res)
+        await redis.set(`product:${product._id}:stock`, product.stock);
         console.log("product created")
         res.status(201).json("product created")
     }

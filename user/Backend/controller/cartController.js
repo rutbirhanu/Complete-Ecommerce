@@ -137,3 +137,50 @@ module.exports = { getUserCart, updateCart, addToCart }
 //     res.status(500).json(err.message)
 //   }
 // }
+
+
+
+
+
+// const addToCart = async (req, res) => {
+//   try {
+//     const { userId } = req.user;
+//     const { itemId } = req.body;
+
+//     const user = await userSchema.findById(userId);
+//     let cartData = user.cartData || {};
+
+//     if (cartData[itemId]) {
+//       cartData[itemId] += 1;
+//     } else {
+//       cartData[itemId] = 1;
+//     }
+
+//     await userSchema.findByIdAndUpdate(userId, { cartData });
+//     res.status(200).json("added to cart");
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json(err.message);
+//   }
+// };
+
+// const updateCart = async (req, res) => {
+//   try {
+//     const { userId } = req.user;
+//     const { itemId, quantity } = req.body;
+
+//     const user = await userSchema.findById(userId);
+//     let cartData = user.cartData || {};
+
+//     if (quantity <= 0) {
+//       delete cartData[itemId];
+//     } else {
+//       cartData[itemId] = quantity;
+//     }
+
+//     await userSchema.findByIdAndUpdate(userId, { cartData });
+//     res.status(200).json("cart updated successfully");
+//   } catch (err) {
+//     res.status(500).json(err.message);
+//   }
+// };

@@ -121,3 +121,133 @@ const verifyStripe = async (req, res) => {
 }
 
 module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders }
+
+
+
+
+
+
+
+
+// const createCheckOut = async (req, res) => {
+//   try {
+//     const { userId } = req.user;
+//     const { address, total, items } = req.body;
+
+//     // Step 1: Reserve stock in Redis
+//     const reservationId = uuidv4();
+//     const reserved = [];
+
+//     for (const item of items) {
+//       const stockKey = `product:${item._id}:stock`;
+
+//       // atomically decrement stock
+//       const stock = await redis.decrby(stockKey, item.quantity);
+
+//       if (stock < 0) {
+//         // rollback this item
+//         await redis.incrby(stockKey, item.quantity);
+
+//         // rollback all reserved so far
+//         for (const r of reserved) {
+//           await redis.incrby(`product:${r._id}:stock`, r.quantity);
+//         }
+
+//         return res.status(400).json({ error: `${item.name} is out of stock` });
+//       }
+//       reserved.push(item);
+//     }
+
+//     // Save reservation with 15 min TTL
+//     const reservationKey = `reservation:${reservationId}`;
+//     await redis.set(reservationKey, JSON.stringify(reserved), "EX", 15 * 60);
+
+//     // Step 2: Create order (pending)
+//     const order = await orderSchema.create({
+//       userId,
+//       address,
+//       items,
+//       total,
+//       date: Date.now(),
+//       payment: false,
+//       reservationId,
+//     });
+
+//     // Step 3: Clear cart
+//     await userSchema.findByIdAndUpdate(userId, { cartData: {} });
+
+//     // Step 4: Stripe checkout
+//     const line_items = items.map((item) => ({
+//       price_data: {
+//         currency: "usd",
+//         product_data: { name: item.name },
+//         unit_amount: item.price * 100,
+//       },
+//       quantity: item.quantity,
+//     }));
+
+//     const session = await stripe.checkout.sessions.create({
+//       line_items,
+//       mode: "payment",
+//       success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}&reservationId=${reservationId}`,
+//       cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}&reservationId=${reservationId}`,
+//     });
+
+//     res.status(201).json({ success: true, id: session.id });
+//   } catch (error) {
+//     console.error("Error creating checkout session:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // =======================
+// // 2. Verify Stripe Payment
+// // =======================
+// const verifyStripe = async (req, res) => {
+//   try {
+//     const { userId } = req.user;
+//     const { orderId, success, reservationId } = req.body;
+
+//     if (success === true) {
+//       // Confirm payment: update MongoDB & finalize stock
+//       await orderSchema.findByIdAndUpdate(orderId, { payment: true });
+
+//       // Apply permanent stock deduction in MongoDB
+//       const reservationKey = `reservation:${reservationId}`;
+//       const reserved = await redis.get(reservationKey);
+
+//       if (reserved) {
+//         const items = JSON.parse(reserved);
+
+//         for (const item of items) {
+//           await productSchema.findByIdAndUpdate(item._id, {
+//             $inc: { stock: -item.quantity },
+//           });
+//         }
+
+//         // Delete reservation after confirming
+//         await redis.del(reservationKey);
+//       }
+
+//       await userSchema.findByIdAndUpdate(userId, { cartData: {} });
+//       res.json({ success: true, message: "Order successful" });
+//     } else {
+//       // Payment failed or cancelled → restore stock
+//       const reservationKey = `reservation:${reservationId}`;
+//       const reserved = await redis.get(reservationKey);
+
+//       if (reserved) {
+//         const items = JSON.parse(reserved);
+//         for (const item of items) {
+//           await redis.incrby(`product:${item._id}:stock`, item.quantity);
+//         }
+//         await redis.del(reservationKey);
+//       }
+
+//       await orderSchema.findByIdAndDelete(orderId);
+//       res.json({ success: false, message: "Order not successful" });
+//     }
+//   } catch (err) {
+//     res.status(500).json(err.message);
+//   }
+// };
