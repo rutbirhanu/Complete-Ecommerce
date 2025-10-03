@@ -26,28 +26,43 @@ const addToCart = async (req, res) => {
     res.status(500).json(err.message)
   }
 }
-
 const updateCart = async (req, res) => {
   try {
-    const { userId } = req.user
-    const { itemId, quantity } = req.body
-    const user = await userModel.findById(userId)
-    let cartData = await user.cartData
-    cartData[itemId] = quantity
+    const { userId } = req.user;
+    const { itemId, quantity } = req.body;
+
+    // Get current stock from Redis (fast) or MongoDB (fallback)
+    const stockKey = `product:${itemId}:stock`;
+    let stock = await redis.get(stockKey);
+    if (!stock) {
+      const product = await productModel.findById(itemId);
+      stock = product.stock;
+      await redis.set(stockKey, stock); // cache for next time
+    }
+    stock = parseInt(stock);
+
+    if (quantity > stock) {
+      return res.status(400).json({
+        message: `Only ${stock} items available`,
+        maxAllowed: stock
+      });
+    }
+
+    // Update cart
+    const user = await userModel.findById(userId);
+    let cartData = user.cartData || {};
+    cartData[itemId] = quantity;
 
     if (cartData[itemId] <= 0) {
       delete cartData[itemId];
     }
 
-    await userModel.findByIdAndUpdate(userId, { cartData })
-    res.status(200).json("cart updated successfully")
-
+    await userModel.findByIdAndUpdate(userId, { cartData });
+    res.status(200).json({ message: "Cart updated successfully", cartData });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  catch (err) {
-    res.status(500).json(err.message)
-
-  }
-}
+};
 
 
 const getUserCart = async (req, res) => {
@@ -82,18 +97,6 @@ const getUserCart = async (req, res) => {
   }
 };
 
-
-
-// const getUserCart = async (req, res) => {
-//   try {
-//     const {userId}=req.body
-//     const user = await userModel.findById(userId)
-//     res.status(200).json({data:user.cartData, message:"cart data fetched successfully"})
-//   }
-//   catch (err) {
-//     res.status(500).json(err.message)
-//   }
-// }
 
 
 module.exports = { getUserCart, updateCart, addToCart }
@@ -140,47 +143,3 @@ module.exports = { getUserCart, updateCart, addToCart }
 
 
 
-
-
-// const addToCart = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const { itemId } = req.body;
-
-//     const user = await userSchema.findById(userId);
-//     let cartData = user.cartData || {};
-
-//     if (cartData[itemId]) {
-//       cartData[itemId] += 1;
-//     } else {
-//       cartData[itemId] = 1;
-//     }
-
-//     await userSchema.findByIdAndUpdate(userId, { cartData });
-//     res.status(200).json("added to cart");
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json(err.message);
-//   }
-// };
-
-// const updateCart = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const { itemId, quantity } = req.body;
-
-//     const user = await userSchema.findById(userId);
-//     let cartData = user.cartData || {};
-
-//     if (quantity <= 0) {
-//       delete cartData[itemId];
-//     } else {
-//       cartData[itemId] = quantity;
-//     }
-
-//     await userSchema.findByIdAndUpdate(userId, { cartData });
-//     res.status(200).json("cart updated successfully");
-//   } catch (err) {
-//     res.status(500).json(err.message);
-//   }
-// };

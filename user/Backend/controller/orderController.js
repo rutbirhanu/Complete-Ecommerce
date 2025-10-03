@@ -1,5 +1,6 @@
 const orderSchema = require("../model/order")
 const userSchema = require("../model/user")
+const redis = require("../config/redisClientConfig")
 
 require("dotenv").config()
 
@@ -69,36 +70,77 @@ const getOrders = async (req, res) => {
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 
 const createCheckOut = async (req, res) => {
-    try {
-        const { userId } = req.user
-        const { address, total, items } = req.body
-        const order = await orderSchema.create({ userId, address, items, total, date: Date.now(), payment: false })
+  try {
+    const { userId } = req.user;
+    const { address, total, items } = req.body;
 
-        await userSchema.findByIdAndUpdate(userId, { cartData: {} })
-        const line_items = items.map((item) => ({
-            price_data: {
-                currency: 'usd',
-                product_data: {
-                    name: item.name
-                },
-                unit_amount: item.price * 100
-            },
-            quantity: item.quantity
-        }))
+    // Step 1: Reserve stock in Redis
+    const reservationId = uuidv4();
+    const reserved = [];
 
-        const session = await stripe.checkout.sessions.create({
-            line_items,
-            mode: 'payment',
-            success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}`,
-            cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}`, // Optionally include a cancel URL
-        });
+    for (const item of items) {
+      const stockKey = `product:${item._id}:stock`;
 
-        res.status(201).json({ success: true, id: session.id });
-    } catch (error) {
-        console.error('Error creating checkout session:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      // atomically decrement stock
+      const stock = await redis.decrby(stockKey, item.quantity);
+
+      if (stock < 0) {
+        // rollback this item
+        await redis.incrby(stockKey, item.quantity);
+
+        // rollback all reserved so far
+        for (const r of reserved) {
+          await redis.incrby(`product:${r._id}:stock`, r.quantity);
+        }
+
+        return res.status(400).json({ error: `${item.name} is out of stock` });
+      }
+      reserved.push(item);
     }
+
+    // Save reservation with 15 min TTL
+    const reservationKey = `reservation:${reservationId}`;
+    await redis.set(reservationKey, JSON.stringify(reserved), "EX", 15 * 60);
+
+    // Step 2: Create order (pending)
+    const order = await orderSchema.create({
+      userId,
+      address,
+      items,
+      total,
+      date: Date.now(),
+      payment: false,
+      reservationId,
+    });
+
+    // Step 3: Clear cart
+    await userSchema.findByIdAndUpdate(userId, { cartData: {} });
+
+    // Step 4: Stripe checkout
+    const line_items = items.map((item) => ({
+      price_data: {
+        currency: "usd",
+        product_data: { name: item.name },
+        unit_amount: item.price * 100,
+      },
+      quantity: item.quantity,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      line_items,
+      mode: "payment",
+      success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}&reservationId=${reservationId}`,
+      cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}&reservationId=${reservationId}`,
+    });
+
+    res.status(201).json({ success: true, id: session.id });
+  } catch (error) {
+    console.error("Error creating checkout session:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
+
+
 
 
 const verifyStripe = async (req, res) => {
@@ -127,82 +169,42 @@ module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders
 
 
 
-
-
 // const createCheckOut = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const { address, total, items } = req.body;
+//     try {
+//         const { userId } = req.user
+//         const { address, total, items } = req.body
+//         const order = await orderSchema.create({ userId, address, items, total, date: Date.now(), payment: false })
 
-//     // Step 1: Reserve stock in Redis
-//     const reservationId = uuidv4();
-//     const reserved = [];
+//         await userSchema.findByIdAndUpdate(userId, { cartData: {} })
+//         const line_items = items.map((item) => ({
+//             price_data: {
+//                 currency: 'usd',
+//                 product_data: {
+//                     name: item.name
+//                 },
+//                 unit_amount: item.price * 100
+//             },
+//             quantity: item.quantity
+//         }))
 
-//     for (const item of items) {
-//       const stockKey = `product:${item._id}:stock`;
+//         const session = await stripe.checkout.sessions.create({
+//             line_items,
+//             mode: 'payment',
+//             success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}`,
+//             cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}`, // Optionally include a cancel URL
+//         });
 
-//       // atomically decrement stock
-//       const stock = await redis.decrby(stockKey, item.quantity);
-
-//       if (stock < 0) {
-//         // rollback this item
-//         await redis.incrby(stockKey, item.quantity);
-
-//         // rollback all reserved so far
-//         for (const r of reserved) {
-//           await redis.incrby(`product:${r._id}:stock`, r.quantity);
-//         }
-
-//         return res.status(400).json({ error: `${item.name} is out of stock` });
-//       }
-//       reserved.push(item);
+//         res.status(201).json({ success: true, id: session.id });
+//     } catch (error) {
+//         console.error('Error creating checkout session:', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
 //     }
+// }
 
-//     // Save reservation with 15 min TTL
-//     const reservationKey = `reservation:${reservationId}`;
-//     await redis.set(reservationKey, JSON.stringify(reserved), "EX", 15 * 60);
 
-//     // Step 2: Create order (pending)
-//     const order = await orderSchema.create({
-//       userId,
-//       address,
-//       items,
-//       total,
-//       date: Date.now(),
-//       payment: false,
-//       reservationId,
-//     });
 
-//     // Step 3: Clear cart
-//     await userSchema.findByIdAndUpdate(userId, { cartData: {} });
 
-//     // Step 4: Stripe checkout
-//     const line_items = items.map((item) => ({
-//       price_data: {
-//         currency: "usd",
-//         product_data: { name: item.name },
-//         unit_amount: item.price * 100,
-//       },
-//       quantity: item.quantity,
-//     }));
 
-//     const session = await stripe.checkout.sessions.create({
-//       line_items,
-//       mode: "payment",
-//       success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}&reservationId=${reservationId}`,
-//       cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}&reservationId=${reservationId}`,
-//     });
-
-//     res.status(201).json({ success: true, id: session.id });
-//   } catch (error) {
-//     console.error("Error creating checkout session:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
-// // =======================
-// // 2. Verify Stripe Payment
-// // =======================
 // const verifyStripe = async (req, res) => {
 //   try {
 //     const { userId } = req.user;

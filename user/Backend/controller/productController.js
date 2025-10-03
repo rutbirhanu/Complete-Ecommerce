@@ -42,43 +42,74 @@ const sendNotification = async (req, res) => {
 
 const allProducts = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = "", category } = req.query
-        let query = {}
+        let {
+            page = 1,
+            limit = 10,
+            category,
+            brand,
+            priceMin,
+            priceMax,
+        } = req.query;
 
-        if (search) {
-            query.name = { $regex: search, $options: "i" }
+        page = parseInt(page);
+        limit = parseInt(limit);
+
+        // Build query object
+        const query = {};
+
+        if (category) query.category = category;
+        if (brand) query.brand = brand;
+        if (priceMin || priceMax) {
+            query.price = {};
+            if (priceMin) query.price.$gte = parseFloat(priceMin);
+            if (priceMax) query.price.$lte = parseFloat(priceMax);
         }
 
-        if (category) {
-            query.category = category;
+
+        // 🔹 Create cache key based on query params
+        const cacheKey = `products:${JSON.stringify({
+            page,
+            limit,
+            category,
+            brand,
+            priceMin,
+            priceMax,
+        })}`;
+
+        // 🔹 Check Redis cache
+        const cachedData = await redis.get(cacheKey);
+        if (cachedData) {
+            console.log("✅ Fetched from Redis cache");
+            return res.status(200).json(JSON.parse(cachedData));
         }
 
-        const cachedProducts = await redis.get("products");
-        if (cachedProducts) {
-            console.log("Fetching from Redis cache ✅");
-            return res.json(JSON.parse(cachedProducts));
-        }
-
-        const products = await productSchema.find(query)
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
+        // 🔹 MongoDB query
+        const products = await productModel
+            .find(query)
             .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
 
-        await redis.set("products", JSON.stringify(products), "EX", 1000); 
+        const totalProducts = await productModel.countDocuments(query);
 
-        const totalProducts = await productSchema.countDocuments(query)
-
-        res.status(200).json({
+        const response = {
             products,
             totalPages: Math.ceil(totalProducts / limit),
-            currentPage: page
-        })
+            currentPage: page,
+            totalProducts,
+        };
 
+        // 🔹 Save in Redis (set TTL of 5 min = 300s)
+        await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
+
+        res.status(200).json(response);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-    catch (err) {
-        res.status(500).json(err)
-    }
-}
+};
+
 
 
 const fetchSingleProduct = async (req, res) => {
@@ -102,14 +133,14 @@ const fetchSingleProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { name, category, brand, price, description,stock } = req.body
+        const { name, category, brand, price, description, stock } = req.body
         const image = req.file
         if (!image) {
             return res.status(404).json("images not found")
         }
         const imageUrl = req.file.path;
         console.log(imageUrl)
-        const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl,stock })
+        const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl, stock })
         // await sendNotification(req, res)
         await redis.set(`product:${product._id}:stock`, product.stock);
         console.log("product created")
@@ -175,82 +206,45 @@ module.exports = { addProduct, sendNotification, allProducts, deleteProduct, upd
 
 
 // GET /products?page=1&limit=20&category=Shoes&brand=Nike&priceMin=50&priceMax=200&sort=price:asc
-// export const getProducts = async (req, res) => {
-//   try {
-//     let {
-//       page = 1,
-//       limit = 10,
-//       category,
-//       brand,
-//       priceMin,
-//       priceMax,
-//       sort
-//     } = req.query;
 
-//     page = parseInt(page);
-//     limit = parseInt(limit);
 
-//     // 🔹 Build query object
-//     const query = {};
 
-//     if (category) query.category = category;
-//     if (brand) query.brand = brand;
-//     if (priceMin || priceMax) {
-//       query.price = {};
-//       if (priceMin) query.price.$gte = parseFloat(priceMin);
-//       if (priceMax) query.price.$lte = parseFloat(priceMax);
+// const allProducts = async (req, res) => {
+//     try {
+//         const { page = 1, limit = 10, search = "", category } = req.query
+//         let query = {}
+
+//         if (search) {
+//             query.name = { $regex: search, $options: "i" }
+//         }
+
+//         if (category) {
+//             query.category = category;
+//         }
+
+//         const cachedProducts = await redis.get("products");
+//         if (cachedProducts) {
+//             console.log("Fetching from Redis cache ✅");
+//             return res.json(JSON.parse(cachedProducts));
+//         }
+
+//         const products = await productSchema.find(query)
+//             .limit(limit * 1)
+//             .skip((page - 1) * limit)
+//             .sort({ createdAt: -1 })
+
+//         await redis.set("products", JSON.stringify(products), "EX", 1000);
+
+//         const totalProducts = await productSchema.countDocuments(query)
+
+//         res.status(200).json({
+//             products,
+//             totalPages: Math.ceil(totalProducts / limit),
+//             currentPage: page
+//         })
+
 //     }
-
-//     // 🔹 Sorting
-//     let sortQuery = { createdAt: -1 }; // default: newest first
-//     if (sort) {
-//       const [field, order] = sort.split(":"); // e.g. "price:asc"
-//       sortQuery = { [field]: order === "asc" ? 1 : -1 };
+//     catch (err) {
+//         res.status(500).json(err)
 //     }
-
-//     // 🔹 Create cache key based on query params
-//     const cacheKey = `products:${JSON.stringify({
-//       page,
-//       limit,
-//       category,
-//       brand,
-//       priceMin,
-//       priceMax,
-//       sort,
-//     })}`;
-
-//     // 🔹 Check Redis cache
-//     const cachedData = await redis.get(cacheKey);
-//     if (cachedData) {
-//       console.log("✅ Fetched from Redis cache");
-//       return res.status(200).json(JSON.parse(cachedData));
-//     }
-
-//     // 🔹 MongoDB query
-//     const products = await productModel
-//       .find(query)
-//       .sort(sortQuery)
-//       .skip((page - 1) * limit)
-//       .limit(limit);
-
-//     const totalProducts = await productModel.countDocuments(query);
-
-//     const response = {
-//       products,
-//       totalPages: Math.ceil(totalProducts / limit),
-//       currentPage: page,
-//       totalProducts,
-//     };
-
-//     // 🔹 Save in Redis (set TTL of 5 min = 300s)
-//     await redis.set(cacheKey, JSON.stringify(response), "EX", 300);
-
-//     res.status(200).json(response);
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
+// }
