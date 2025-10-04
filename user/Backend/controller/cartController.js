@@ -26,6 +26,7 @@ const addToCart = async (req, res) => {
     res.status(500).json(err.message)
   }
 }
+
 const updateCart = async (req, res) => {
   try {
     const { userId } = req.user;

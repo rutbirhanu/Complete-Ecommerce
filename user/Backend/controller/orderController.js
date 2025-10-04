@@ -1,5 +1,6 @@
 const orderSchema = require("../model/order")
 const userSchema = require("../model/user")
+const productSchema = require("../model/product")
 const redis = require("../config/redisClientConfig")
 
 require("dotenv").config()
@@ -114,7 +115,7 @@ const createCheckOut = async (req, res) => {
     });
 
     // Step 3: Clear cart
-    await userSchema.findByIdAndUpdate(userId, { cartData: {} });
+    // await userSchema.findByIdAndUpdate(userId, { cartData: {} });
 
     // Step 4: Stripe checkout
     const line_items = items.map((item) => ({
@@ -142,25 +143,54 @@ const createCheckOut = async (req, res) => {
 
 
 
-
 const verifyStripe = async (req, res) => {
-    try {
-        const { userId } = req.user
-        const { orderId, success } = req.body
-        if (success === true) {
-            await orderSchema.findByIdAndUpdate(orderId, { payment: true })
-            await userSchema.findByIdAndUpdate(userId, { cartData: {} })
-            res.json({ success: true, message: "order successful" })
+  try {
+    const { userId } = req.user;
+    const { orderId, success, reservationId } = req.body;
+
+    if (success === true) {
+      await orderSchema.findByIdAndUpdate(orderId, { payment: true });
+
+      // Apply permanent stock deduction in MongoDB
+      const reservationKey = `reservation:${reservationId}`;
+      const reserved = await redis.get(reservationKey);
+
+      if (reserved) {
+        const items = JSON.parse(reserved);
+
+        for (const item of items) {
+          await productSchema.findByIdAndUpdate(item._id, {
+            $inc: { stock: -item.quantity },
+          });
         }
-        else {
-            await orderSchema.findByIdAndDelete(orderId)
-            res.json({ success: false, message: "order not successful" })
+
+        await redis.del(reservationKey);
+      }
+
+      await userSchema.findByIdAndUpdate(userId, { cartData: {} });
+      res.json({ success: true, message: "Order successful" });
+    } else {
+      // Payment failed or cancelled → restore stock
+      const reservationKey = `reservation:${reservationId}`;
+      const reserved = await redis.get(reservationKey);
+
+      if (reserved) {
+        const items = JSON.parse(reserved);
+        for (const item of items) {
+          await redis.incrby(`product:${item._id}:stock`, item.quantity);
         }
+        await redis.del(reservationKey);
+      }
+
+      await orderSchema.findByIdAndDelete(orderId);
+      res.json({ success: false, message: "Order not successful" });
     }
-    catch (err) {
-        res.status(500).json(err.message)
-    }
-}
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+};
+
+
 
 module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders }
 
@@ -206,50 +236,20 @@ module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders
 
 
 // const verifyStripe = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const { orderId, success, reservationId } = req.body;
-
-//     if (success === true) {
-//       // Confirm payment: update MongoDB & finalize stock
-//       await orderSchema.findByIdAndUpdate(orderId, { payment: true });
-
-//       // Apply permanent stock deduction in MongoDB
-//       const reservationKey = `reservation:${reservationId}`;
-//       const reserved = await redis.get(reservationKey);
-
-//       if (reserved) {
-//         const items = JSON.parse(reserved);
-
-//         for (const item of items) {
-//           await productSchema.findByIdAndUpdate(item._id, {
-//             $inc: { stock: -item.quantity },
-//           });
+//     try {
+//         const { userId } = req.user
+//         const { orderId, success } = req.body
+//         if (success === true) {
+//             await orderSchema.findByIdAndUpdate(orderId, { payment: true })
+//             await userSchema.findByIdAndUpdate(userId, { cartData: {} })
+//             res.json({ success: true, message: "order successful" })
 //         }
-
-//         // Delete reservation after confirming
-//         await redis.del(reservationKey);
-//       }
-
-//       await userSchema.findByIdAndUpdate(userId, { cartData: {} });
-//       res.json({ success: true, message: "Order successful" });
-//     } else {
-//       // Payment failed or cancelled → restore stock
-//       const reservationKey = `reservation:${reservationId}`;
-//       const reserved = await redis.get(reservationKey);
-
-//       if (reserved) {
-//         const items = JSON.parse(reserved);
-//         for (const item of items) {
-//           await redis.incrby(`product:${item._id}:stock`, item.quantity);
+//         else {
+//             await orderSchema.findByIdAndDelete(orderId)
+//             res.json({ success: false, message: "order not successful" })
 //         }
-//         await redis.del(reservationKey);
-//       }
-
-//       await orderSchema.findByIdAndDelete(orderId);
-//       res.json({ success: false, message: "Order not successful" });
 //     }
-//   } catch (err) {
-//     res.status(500).json(err.message);
-//   }
-// };
+//     catch (err) {
+//         res.status(500).json(err.message)
+//     }
+// }
