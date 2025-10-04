@@ -11,7 +11,7 @@ const paymentProducer = kafka.producer()
 
 const connectProducer = async() => {
    try {
-        paymentProducer.connect()
+       await paymentProducer.connect()
         console.log("order producer connected")
     }
     catch (err) {

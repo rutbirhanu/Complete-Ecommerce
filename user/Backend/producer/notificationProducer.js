@@ -11,7 +11,7 @@ const notificationProducer = kafka.producer()
 
 const connectProducer = async() => {
    try {
-        notificationProducer.connect()
+        await notificationProducer.connect()
         console.log("order producer connected")
     }
     catch (err) {
