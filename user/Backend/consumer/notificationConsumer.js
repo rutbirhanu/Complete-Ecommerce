@@ -18,7 +18,9 @@ const run = async () => {
         })
 
         await notificationConsumer.run({
-            eachMessage: async ({topic, partition, message }) => {
+            eachMessage: async ({ topic, partition, message }) => {
+                const value = message.value.toString()
+                const {userId, cartData} = JSON.parse(value)
                 
             }
         })
