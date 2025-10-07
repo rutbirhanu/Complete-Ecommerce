@@ -1,16 +1,16 @@
-const Kafka = require("kafkajs")
+const {Kafka} = require("kafkajs")
 
-export const createKafkaClient = (service) => {
+exports.createKafkaClient = (service) => {
    return new Kafka(
         {
             clientId: service,
-            brokers: ["localhost:9094"]
+            brokers: ["localhost:9092"]
         }
     )
 }
 
 
-export const createProducer = (kafka) => {
+exports.createProducer = (kafka) => {
     const producer = kafka.producer()
 
     const connect = async () => {
@@ -33,8 +33,7 @@ export const createProducer = (kafka) => {
 
 
 
-
-export const createConsumer = (kafka, groupId) => {
+exports.createConsumer = (kafka, groupId) => {
     const consumer = kafka.consumer({ groupId })
 
     const connect = async () => {
@@ -45,7 +44,6 @@ export const createConsumer = (kafka, groupId) => {
         await consumer.subscribe({
             topic,
             fromBeginning: true,
-            messages: [{ value: JSON.stringify(message) }]
         })
 
         await consumer.run({
@@ -72,19 +70,3 @@ export const createConsumer = (kafka, groupId) => {
 }
 
 
-
-
-
-// const kafkaAdmin = kafka.admin()
-
-// const run = async () => {
-//     await kafkaAdmin.connect()
-//     await kafkaAdmin.createTopic({
-//         topics: [
-//             { topic: "payment" },
-//             { topic: "order" },
-//             { topic: "inventory" },
-//             { topic: "notification" },
-//         ]
-//     })
-// }

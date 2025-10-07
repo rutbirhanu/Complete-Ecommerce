@@ -8,6 +8,7 @@ const orderRoute = require("./route/orderRoute")
 const connectDB = require("./config/dbConfig")
 const cookieParser = require("cookie-parser")
 const serviceAccount = require("./serviceAccountKey.json")
+const { Kafka } = require("kafkajs")
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -36,5 +37,26 @@ app.use("/product", productRoute)
 
 connectDB(process.env.MONGODB_CONNECTION)
 app.listen(3500, () => {
+
+    // const kafka = new Kafka(
+    //     {
+    //         clientId: 'order',
+    //         brokers: ["localhost:9094"]
+    //     }
+    // )
+    // const kafkaAdmin = kafka.admin()
+
+    // const run = async () => {
+    //     await kafkaAdmin.connect()
+    //     await kafkaAdmin.createTopic({
+    //         topics: [
+    //             { topic: "payment" },
+    //             { topic: "order" },
+    //             { topic: "inventory" },
+    //             { topic: "notification" },
+    //         ]
+    //     })
+    // }
+
     console.log("server has started")
 })

@@ -5,24 +5,44 @@ services:
     image: bitnami/kafka:latest
     container_name: kafka-broker
     environment:
-      - KAFKA_NODE_ID = 1
-      - KAFKA_PROCESS_ROLES=broker,controller 
-      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 
-      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER 
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT 
-      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 
-      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 
-      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 
-      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0 
-      - KAFKA_NUM_PARTITIONS=3 
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-broker:9092
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-broker:9093
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_CFG_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_CFG_NUM_PARTITIONS=3
+
+    ports:
+      - 9092:9092
+
+    networks:
+      - kafka-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui
     container_name: kafka-ui
+    depends_on:
+      - kafka-broker
     environment:
+      - KAFKA_CLUSTERS_0_NAME = local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS = kafka-broker:9092
+      - KAFKA_CLUSTERS_0_READONLY = false
+      - KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE = true
       - DYNAMIC_CONFIG_ENABLED = 'true'
-    port:
+    ports:
       - "8080:8080"
+
+    networks:
+      - kafka-network
+
+
+networks:
+  kafka-network:
+    driver: bridge
 

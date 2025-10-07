@@ -2,7 +2,8 @@ const productSchema = require("../model/product")
 const { getMessaging } = require("firebase-admin/messaging")
 const admin = require("firebase-admin")
 const cloudinary = require('cloudinary').v2;
-const redis = require("../config/redisClientConfig")
+const redis = require("../config/redisClientConfig");
+const { createKafkaClient, createProducer, createConsumer } = require("../config/kafkaConfig");
 
 
 cloudinary.config({
@@ -10,6 +11,12 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,       // Your Cloudinary API key
     api_secret: process.env.CLOUDINARY_API_SECRET, // Your Cloudinary API secret
 });
+
+
+const kafka = createKafkaClient("product")
+const producer = createProducer(kafka)
+const consumer = createConsumer(kafka, "product-id")
+
 
 
 const sendNotification = async (req, res) => {
@@ -154,7 +161,7 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { productId } = req.params
-        const { name, category, brand, price, description, image } = req.body
+        const { name, category, brand, price, description, image, stock } = req.body
 
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, {
@@ -165,7 +172,7 @@ const updateProduct = async (req, res) => {
 
         const updatedProduct = await productSchema.findByIdAndUpdate(
             productId,
-            { name, category, brand, price, description, image },
+            { name, category, brand, price, description, image, stock },
             { new: true }
         );
 
@@ -180,6 +187,10 @@ const updateProduct = async (req, res) => {
         res.status(500).json(err)
     }
 }
+
+
+
+consumer.subscribe("order", updateProduct)
 
 
 const deleteProduct = async (req, res) => {
