@@ -34,29 +34,36 @@ app.use("/order", orderRoute)
 app.use("/product", productRoute)
 
 
+const kafka = new Kafka(
+    {
+        clientId: 'kafka-service',
+        brokers: ["localhost:9092"]
+    }
+)
+const kafkaAdmin = kafka.admin()
+const run = async () => {
+    try {
+        await kafkaAdmin.connect();
+        await kafkaAdmin.createTopics({
+            topics: [
+                { topic: "payment" },
+                { topic: "order" },
+                { topic: "inventory" },
+                { topic: "notification" },
+            ],
+        });
+        console.log("Kafka topics created successfully ✅");
+    } catch (err) {
+        console.error("Error creating Kafka topics ❌", err);
+    } finally {
+        await kafkaAdmin.disconnect();
+    }
+};
+
+
 
 connectDB(process.env.MONGODB_CONNECTION)
-app.listen(3500, () => {
-
-    // const kafka = new Kafka(
-    //     {
-    //         clientId: 'order',
-    //         brokers: ["localhost:9094"]
-    //     }
-    // )
-    // const kafkaAdmin = kafka.admin()
-
-    // const run = async () => {
-    //     await kafkaAdmin.connect()
-    //     await kafkaAdmin.createTopic({
-    //         topics: [
-    //             { topic: "payment" },
-    //             { topic: "order" },
-    //             { topic: "inventory" },
-    //             { topic: "notification" },
-    //         ]
-    //     })
-    // }
-
+app.listen(3500, async () => {
+    await run()
     console.log("server has started")
 })

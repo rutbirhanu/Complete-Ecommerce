@@ -2,7 +2,7 @@ version: '3.8'
 services:
 
   kafka-broker:
-    image: bitnami/kafka:latest
+    image: bitnamilegacy/kafka:3.7
     container_name: kafka-broker
     environment:
       - KAFKA_CFG_NODE_ID=1
