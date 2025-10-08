@@ -73,8 +73,8 @@ const getUserCart = async (req, res) => {
     const user = await userModel.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const cartData = user.cartData; 
-    const itemIds = Object.keys(cartData); 
+    const cartData = user.cartData;
+    const itemIds = Object.keys(cartData);
 
     if (itemIds.length === 0) {
       return res.status(200).json({ data: [], message: "Cart is empty" });
@@ -87,9 +87,8 @@ const getUserCart = async (req, res) => {
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: cartData[product._id], 
+      quantity: cartData[product._id],
     }));
-
     res.status(200).json({ data: detailedCart, message: "Cart data fetched successfully" });
 
   } catch (err) {

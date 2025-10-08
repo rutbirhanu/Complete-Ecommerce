@@ -91,13 +91,13 @@ const allProducts = async (req, res) => {
         }
 
         // 🔹 MongoDB query
-        const products = await productModel
+        const products = await productSchema
             .find(query)
             .sort({ createdAt: -1 })
             .skip((page - 1) * limit)
             .limit(limit);
 
-        const totalProducts = await productModel.countDocuments(query);
+        const totalProducts = await productSchema.countDocuments(query);
 
         const response = {
             products,

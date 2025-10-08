@@ -80,6 +80,7 @@ const createCheckOut = async (req, res) => {
     const { userId } = req.user;
     const { address, total, items } = req.body;
 
+    const { v4: uuidv4 } = await import('uuid');
     const reservationId = uuidv4();
     const reserved = [];
 
@@ -88,36 +89,25 @@ const createCheckOut = async (req, res) => {
 
       const stock = await redis.decrby(stockKey, item.quantity);
 
-      if (stock < 0) {
-        await redis.incrby(stockKey, item.quantity);
+      // if (stock < 0) {
+      //   await redis.incrby(stockKey, item.quantity);
 
-        // rollback all reserved so far
-        for (const r of reserved) {
-          await redis.incrby(`product:${r._id}:stock`, r.quantity);
-        }
+      //   // rollback all reserved so far
+      //   for (const r of reserved) {
+      //     await redis.incrby(`product:${r._id}:stock`, r.quantity);
+      //   }
 
-        return res.status(400).json({ error: `${item.name} is out of stock` });
-      }
+      //   return res.status(400).json({ error: `${item.name} is out of stock` });
+      // }
       reserved.push(item);
     }
 
     const reservationKey = `reservation:${reservationId}`;
-    await redis.set(reservationKey, JSON.stringify(reserved), "EX", 15 * 60);
-
-    const order = await orderSchema.create({
-      userId,
-      address,
-      items,
-      total,
-      date: Date.now(),
-      payment: false,
-      reservationId,
-    });
-
+    await redis.set(reservationKey, JSON.stringify({ items: reserved, total, address }), "EX", 15 * 60);
 
     // Step 4: Stripe checkout
     const line_items = items.map((item) => ({
-      price_message: {
+      price_data: {
         currency: "usd",
         product_data: { name: item.name },
         unit_amount: item.price * 100,
@@ -128,8 +118,8 @@ const createCheckOut = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       line_items,
       mode: "payment",
-      success_url: `http://localhost:5173/verify?success=true&orderId=${order._id}&reservationId=${reservationId}`,
-      cancel_url: `http://localhost:5173/verify?success=false&orderId=${order._id}&reservationId=${reservationId}`,
+      success_url: `http://localhost:5173/verify?success=true&reservationId=${reservationId}&userId=${userId}`,
+      cancel_url: `http://localhost:5173/verify?success=false&reservationId=${reservationId}&userId=${userId}`,
     });
 
     res.status(201).json({ success: true, id: session.id });
@@ -145,11 +135,10 @@ const createCheckOut = async (req, res) => {
 const verifyStripe = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { orderId, success, reservationId } = req.body;
+    const { success, reservationId } = req.body;
 
     if (success === true) {
       producer.send("payment_success", {
-        orderId: orderId,
         userId: userId,
         reservationId: reservationId
       })
@@ -157,7 +146,6 @@ const verifyStripe = async (req, res) => {
 
     } else {
       producer.send("payment_failed", {
-        orderId: orderId,
         reservationId: reservationId
       })
 
@@ -172,13 +160,23 @@ const verifyStripe = async (req, res) => {
 
 
 consumer.subscribe("payment_success", async (message) => {
-  const { orderId, reservationId, userId } = message.value
+  const { reservationId, userId } = message.value
 
   const reservationKey = `reservation:${reservationId}`;
   const reserved = await redis.get(reservationKey);
 
   if (reserved) {
-    const items = JSON.parse(reserved);
+    const { items, total, address } = JSON.parse(reserved);
+
+    const order = await orderSchema.create({
+      userId,
+      address,
+      items,
+      total,
+      date: Date.now(),
+      payment: true,
+      reservationId,
+    });
 
     for (const item of items) {
       await productSchema.findByIdAndUpdate(item._id, {
@@ -192,13 +190,11 @@ consumer.subscribe("payment_success", async (message) => {
   //create order here
   await userSchema.findByIdAndUpdate(userId, { cartData: {} });
 
-  await orderSchema.findByIdAndUpdate(orderId, { payment: true });
 })
 
 
-
 consumer.subscribe("payment_failed", async (message) => {
-  const { orderId, reservationId } = message.value
+  const { reservationId } = message.value
   const reservationKey = `reservation:${reservationId}`;
   const reserved = await redis.get(reservationKey);
 
@@ -209,11 +205,10 @@ consumer.subscribe("payment_failed", async (message) => {
     }
     await redis.del(reservationKey);
   }
-  await orderSchema.findByIdAndDelete(orderId);
 
 })
 
-module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders }
+module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders, producer, consumer }
 
 
 

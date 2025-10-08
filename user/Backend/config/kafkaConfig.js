@@ -49,7 +49,7 @@ exports.createConsumer = (kafka, groupId) => {
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 try {
-                    const value = message.value.toString
+                    const value = message.value.toString()
                     if (value) {
                         handler(JSON.parse(value))
                     }

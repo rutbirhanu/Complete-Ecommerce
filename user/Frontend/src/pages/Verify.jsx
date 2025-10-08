@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 function Verify() {
     const [searchParams, setSearchParams] = useSearchParams()
     const success = searchParams.get("success")
-    const orderId = searchParams.get("orderId")
+    const reservationId = searchParams.get("reservationId")
     const navigate= useNavigate()
     
     const verifyPayment = async () => {
@@ -15,7 +15,7 @@ function Verify() {
                     "Content-Type":"application/json"
                 },
                 credentials:"include",
-                body: JSON.stringify({ success: success === 'true', orderId:orderId }) 
+                body: JSON.stringify({ success: success === 'true', reservationId:reservationId }) 
             })
 
             const response = await request.json()

@@ -67,7 +67,6 @@ export const fetchUserCart = createAsyncThunk(
             )
 
             const res = await req.json()
-
             return res.data
         }
         catch (err) {

@@ -35,6 +35,8 @@ function CartPage() {
     });
 
     const session = await response.json();
+    console.log("this is payment")
+    console.log(session)
     await stripe.redirectToCheckout({ sessionId: session.id });
   };
 
