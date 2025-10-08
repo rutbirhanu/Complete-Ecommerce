@@ -158,57 +158,59 @@ const verifyStripe = async (req, res) => {
   }
 };
 
+const runSubscription = async () => {
 
-consumer.subscribe("payment_success", async (message) => {
-  const { reservationId, userId } = message.value
+  consumer.subscribe("payment_success", async (message) => {
+    const { reservationId, userId } = message
 
-  const reservationKey = `reservation:${reservationId}`;
-  const reserved = await redis.get(reservationKey);
+    const reservationKey = `reservation:${reservationId}`;
+    const reserved = await redis.get(reservationKey);
 
-  if (reserved) {
-    const { items, total, address } = JSON.parse(reserved);
+    if (reserved) {
+      const { items, total, address } = JSON.parse(reserved);
 
-    const order = await orderSchema.create({
-      userId,
-      address,
-      items,
-      total,
-      date: Date.now(),
-      payment: true,
-      reservationId,
-    });
-
-    for (const item of items) {
-      await productSchema.findByIdAndUpdate(item._id, {
-        $inc: { stock: -item.quantity },
+      const order = await orderSchema.create({
+        userId,
+        address,
+        items,
+        total,
+        date: Date.now(),
+        payment: true,
+        reservationId,
       });
+
+      for (const item of items) {
+        await productSchema.findByIdAndUpdate(item._id, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+
+      await redis.del(reservationKey);
     }
 
-    await redis.del(reservationKey);
-  }
+    //create order here
+    await userSchema.findByIdAndUpdate(userId, { cartData: {} });
 
-  //create order here
-  await userSchema.findByIdAndUpdate(userId, { cartData: {} });
-
-})
+  })
 
 
-consumer.subscribe("payment_failed", async (message) => {
-  const { reservationId } = message.value
-  const reservationKey = `reservation:${reservationId}`;
-  const reserved = await redis.get(reservationKey);
+  consumer.subscribe("payment_failed", async (message) => {
+    const { reservationId } = message
+    const reservationKey = `reservation:${reservationId}`;
+    const reserved = await redis.get(reservationKey);
 
-  if (reserved) {
-    const items = JSON.parse(reserved);
-    for (const item of items) {
-      await redis.incrby(`product:${item._id}:stock`, item.quantity);
+    if (reserved) {
+      const items = JSON.parse(reserved);
+      for (const item of items) {
+        await redis.incrby(`product:${item._id}:stock`, item.quantity);
+      }
+      await redis.del(reservationKey);
     }
-    await redis.del(reservationKey);
-  }
 
-})
+  })
+}
 
-module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders, producer, consumer }
+module.exports = { createCheckOut, verifyStripe, userOrder, allOrders, getOrders, producer, consumer, runSubscription }
 
 
 

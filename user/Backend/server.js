@@ -9,6 +9,7 @@ const connectDB = require("./config/dbConfig")
 const cookieParser = require("cookie-parser")
 const serviceAccount = require("./serviceAccountKey.json")
 const { Kafka } = require("kafkajs")
+const { producer, consumer, runSubscription } = require("./controller/orderController")
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -66,5 +67,8 @@ app.use("/product", productRoute)
 
 connectDB(process.env.MONGODB_CONNECTION)
 app.listen(3500, async () => {
+    await producer.connect()
+    await consumer.connect()
+    await runSubscription()
     console.log("server has started")
 })
