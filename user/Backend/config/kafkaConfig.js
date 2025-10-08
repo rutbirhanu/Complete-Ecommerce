@@ -1,10 +1,10 @@
-const {Kafka} = require("kafkajs")
+const { Kafka } = require("kafkajs")
 
 exports.createKafkaClient = (service) => {
-   return new Kafka(
+    return new Kafka(
         {
             clientId: service,
-            brokers: ["localhost:9092"]
+            brokers: ["localhost:9094"]
         }
     )
 }
