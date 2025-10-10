@@ -4,12 +4,13 @@ const admin = require("firebase-admin")
 const cloudinary = require('cloudinary').v2;
 const redis = require("../config/redisClientConfig");
 const { createKafkaClient, createProducer, createConsumer } = require("../config/kafkaConfig");
+const { elasticClient } = require("../config/elasticsearchConfig");
 
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Your Cloudinary cloud name
-    api_key: process.env.CLOUDINARY_API_KEY,       // Your Cloudinary API key
-    api_secret: process.env.CLOUDINARY_API_SECRET, // Your Cloudinary API secret
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 
@@ -45,6 +46,36 @@ const sendNotification = async (req, res) => {
         res.status(500).json(err.message)
     }
 }
+
+
+const searchProducts = async (req, res) => {
+    const { query } = req.query;
+
+    try {
+        const result = await elasticClient.search({
+            index: "products",
+            body: {
+                query: {
+                    multi_match: {
+                        query,
+                        fields: ["name", "description", "category", "brand"],
+                        fuzziness: "auto" // allows for typos
+                    }
+                }
+            }
+        });
+
+        const hits = result.hits.hits.map(hit => ({
+            id: hit._id,
+            ...hit._source
+        }));
+
+        res.json(hits);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Search failed" });
+    }
+};
 
 
 const allProducts = async (req, res) => {
@@ -146,10 +177,24 @@ const addProduct = async (req, res) => {
             return res.status(404).json("images not found")
         }
         const imageUrl = req.file.path;
-        console.log(imageUrl)
         const product = await productSchema.create({ name, category, brand, price, description, image: imageUrl, stock })
         // await sendNotification(req, res)
         await redis.set(`product:${product._id}:stock`, product.stock);
+
+
+        // await elasticClient.index({
+        //     index: "products",
+        //     id: product._id.toString(),
+        //     document: {
+        //         name: product.name,
+        //         description: product.description,
+        //         price: product.price,
+        //         category: product.category,
+        //         stock: product.stock,
+        //     },
+        // });
+
+
         console.log("product created")
         res.status(201).json("product created")
     }

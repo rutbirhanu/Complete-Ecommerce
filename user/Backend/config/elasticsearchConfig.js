@@ -8,6 +8,7 @@ const elasticClient = new Client({
 //   }
 });
 
+
 async function checkConnection() {
   try {
     const health = await elasticClient.cluster.health();
@@ -17,6 +18,31 @@ async function checkConnection() {
   }
 }
 
-checkConnection();
 
-module.exports = elasticClient;
+
+async function createProductIndex() {
+  const indexExists = await elasticClient.indices.exists({ index: "products" });
+
+  if (!indexExists) {
+    await elasticClient.indices.create({
+      index: "products",
+      body: {
+        mappings: {
+          properties: {
+            name: { type: "text" },
+            description: { type: "text" },
+            price: { type: "float" },
+            category: { type: "keyword" },
+            stock: { type: "integer" }
+          }
+        }
+      }
+    });
+
+    console.log("✅ Created 'products' index in Elasticsearch");
+  }
+}
+
+
+
+module.exports = {elasticClient, checkConnection, createProductIndex};
