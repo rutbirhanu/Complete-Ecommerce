@@ -221,11 +221,17 @@ const getSuggestions = async (req, res) => {
         const response = await elasticClient.search({
             index: "products",
             body: {
+                query: {
+                    multi_match: {
+                        query: query,
+                        fields: ["name^2", "description", "category", "brand"]
+                    }
+                },
                 suggest: {
                     product_suggest: {
                         prefix: query,
                         completion: {
-                            field: "suggest",
+                            field: "name",
                             fuzzy: { fuzziness: 1 }, // allows minor typos
                             size: 5,
                         },
@@ -238,6 +244,8 @@ const getSuggestions = async (req, res) => {
             response.suggest.product_suggest[0].options.map(
                 (opt) => opt.text
             );
+
+        console.log(suggestions)
 
         res.json({ suggestions });
     } catch (err) {

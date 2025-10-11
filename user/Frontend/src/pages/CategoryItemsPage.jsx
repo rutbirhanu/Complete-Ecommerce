@@ -38,7 +38,7 @@ function CategoryItemsPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <NavBar />
-            <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-10">
+            <div className="max-w-7xl mx-auto pr-6 py-3 flex flex-col lg:flex-row gap-10">
                 {/* Sidebar Filters */}
                 <aside className="lg:w-1/4 bg-white p-6 rounded-2xl shadow-md sticky left-0 top-40 bottom-30 self-start">
                     <h5 className="text-sm font-semibold mb-4 text-gray-800">Filters</h5>
