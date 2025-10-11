@@ -214,7 +214,7 @@ const addProduct = async (req, res) => {
 }
 
 
-export const getSuggestions = async (req, res) => {
+const getSuggestions = async (req, res) => {
     try {
         const { query } = req.query;
 
@@ -269,6 +269,19 @@ const updateProduct = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        await elasticClient.update({
+            index: "products",
+            id: productId,
+            doc: {
+                name: updatedProduct.name,
+                description: updatedProduct.description,
+                price: updatedProduct.price,
+                category: updatedProduct.category,
+                stock: updatedProduct.stock,
+            }
+        });
+
+
         res.status(200).json("Updated successfully");
 
     }
@@ -290,6 +303,10 @@ const deleteProduct = async (req, res) => {
         if (!deletedProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
+        await elasticClient.delete({
+            index: "products",
+            id: productId,
+        });
 
         res.status(200).json("Deleted successfully");
 
