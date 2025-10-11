@@ -2,10 +2,10 @@ const { Client } = require("@elastic/elasticsearch");
 
 const elasticClient = new Client({
   node: "http://localhost:9200",
-//   auth: {
-//     username: "elastic",
-//     password: "your-password-here" // optional for local dev if disabled
-//   }
+  //   auth: {
+  //     username: "elastic",
+  //     password: "your-password-here" // optional for local dev if disabled
+  //   }
 });
 
 
@@ -33,7 +33,10 @@ async function createProductIndex() {
             description: { type: "text" },
             price: { type: "float" },
             category: { type: "keyword" },
-            stock: { type: "integer" }
+            stock: { type: "integer" },
+            suggest: {
+              type: "completion", 
+            },
           }
         }
       }
@@ -45,4 +48,4 @@ async function createProductIndex() {
 
 
 
-module.exports = {elasticClient, checkConnection, createProductIndex};
+module.exports = { elasticClient, checkConnection, createProductIndex };

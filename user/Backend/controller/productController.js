@@ -182,17 +182,27 @@ const addProduct = async (req, res) => {
         await redis.set(`product:${product._id}:stock`, product.stock);
 
 
-        // await elasticClient.index({
-        //     index: "products",
-        //     id: product._id.toString(),
-        //     document: {
-        //         name: product.name,
-        //         description: product.description,
-        //         price: product.price,
-        //         category: product.category,
-        //         stock: product.stock,
-        //     },
-        // });
+        await elasticClient.index({
+            index: "products",
+            id: product._id.toString(),
+            document: {
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                category: product.category,
+                stock: product.stock,
+
+                suggest: {
+                    "product-suggest": {
+                        "prefix": "ni",
+                        "completion": {
+                            "field": "name",
+                            "contexts": { "category": ["shoes"] }
+                        }
+                    }
+                }
+            },
+        });
 
 
         console.log("product created")
@@ -202,6 +212,40 @@ const addProduct = async (req, res) => {
         return res.status(500).json("not successful")
     }
 }
+
+
+export const getSuggestions = async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        const response = await elasticClient.search({
+            index: "products",
+            body: {
+                suggest: {
+                    product_suggest: {
+                        prefix: query,
+                        completion: {
+                            field: "suggest",
+                            fuzzy: { fuzziness: 1 }, // allows minor typos
+                            size: 5,
+                        },
+                    },
+                },
+            },
+        });
+
+        const suggestions =
+            response.suggest.product_suggest[0].options.map(
+                (opt) => opt.text
+            );
+
+        res.json({ suggestions });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error fetching suggestions" });
+    }
+};
+
 
 const updateProduct = async (req, res) => {
     try {

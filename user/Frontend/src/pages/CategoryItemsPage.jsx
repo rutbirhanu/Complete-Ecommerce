@@ -40,7 +40,7 @@ function CategoryItemsPage() {
             <NavBar />
             <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-10">
                 {/* Sidebar Filters */}
-                <aside className="lg:w-1/4 bg-white p-6 rounded-2xl shadow-md h-fit ">
+                <aside className="lg:w-1/4 bg-white p-6 rounded-2xl shadow-md h-dvh sticky left-0 top-0 bottom-0">
                     <h5 className="text-sm font-semibold mb-4 text-gray-800">Filters</h5>
 
                     {/* Price Range */}
@@ -96,9 +96,9 @@ function CategoryItemsPage() {
 
                 {/* Product Grid */}
                 <main className="flex-1">
-                    <h2 className="text-2xl font-semibold mb-6 text-gray-800 capitalize">
+                    <h3 className="text-xl font-bold mb-6 text-center text-gray-800 capitalize">
                         {category} Category
-                    </h2>
+                    </h3>
 
                     {sortedItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center text-center mt-10">
