@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
-import { useNavigate } from "react-router-dom"
-
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 function CategoryCard({ desc, category, imgSource }) {
   const navigate = useNavigate();
@@ -11,23 +11,29 @@ function CategoryCard({ desc, category, imgSource }) {
 
   return (
     <div
-      className="relative m-2 rounded-[4px] cursor-pointer"
       onClick={handleClick}
+      className="relative m-3 cursor-pointer overflow-hidden rounded-xl shadow-md hover:shadow-lg bg-white transition-all duration-200"
     >
-      {/* Overlay */}
-      <div className="absolute top-[17px] left-[15px] transition-all duration-400 ease-in-out hover:top-[2px] hover:left-[2px] hover:h-[99%] hover:w-[99%] hover:bg-white/40 flex flex-col justify-start p-2">
-        <p className="font-sans font-normal">{desc}</p>
-        <h5 className="font-sans font-bold text-[1.4rem]">{category}</h5>
-      </div>
-
+      {/* Background Image */}
       <img
         src={imgSource}
         alt={category}
-        className="h-[310px] w-[290px] rounded-[4px] object-cover"
+        className="h-[320px] w-[300px] object-cover rounded-xl"
       />
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+
+      {/* Text Content */}
+      <div className="absolute bottom-5 left-5 right-5 text-white">
+        <h3 className="text-xl font-semibold">{category}</h3>
+        <p className="text-sm text-gray-200 mb-3 line-clamp-2">{desc}</p>
+        <div className="inline-flex items-center gap-2 bg-white text-gray-900 font-semibold px-3 py-1.5 rounded-full text-sm hover:bg-gray-200">
+          Shop Now <FontAwesomeIcon icon={faArrowRight} />
+        </div>
+      </div>
     </div>
   );
 }
 
-
-export default CategoryCard
+export default CategoryCard;
