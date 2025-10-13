@@ -39,11 +39,12 @@ function DetailsPage() {
       <div className="details-parent-container">
         <div className='details-page-container'>
           <div className="details-left-side">
-            <img src={product.image} alt={product.name} />
+            <img src={product.image} alt={product.name} className="w-full max-w-[300px] h-auto rounded-xl object-cover shadow-sm" />
           </div>
 
           <div className="details-right-side">
             <h3>{product.name}</h3>
+            <p>{product.description}</p>
             <h3>${product.price}</h3>
             <div className="item-details">
               <h4>Details</h4>
