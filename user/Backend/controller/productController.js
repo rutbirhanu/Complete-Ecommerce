@@ -19,7 +19,6 @@ const producer = createProducer(kafka)
 const consumer = createConsumer(kafka, "product-id")
 
 
-
 const sendNotification = async (req, res) => {
     try {
         const receivedToken = "eTwzPVpZaG5t_-c50-60Qx:APA91bF691zqdZj6ZnsKr5TGiFJVoRtXNFWxASJH5QgwF-99Za7U-O9e3bNW0uur2_AQLIhC0J0KBAtPdg4nedhp-NMVmzK2VsV2N27OggG1dIo6f0VtUhfSik2ZOQDuBjTC2YzVCO7Y"
@@ -231,8 +230,8 @@ const getSuggestions = async (req, res) => {
                     product_suggest: {
                         prefix: query,
                         completion: {
-                            field: "name",
-                            fuzzy: { fuzziness: 1 }, // allows minor typos
+                            field: "suggest",
+                            fuzzy: { fuzziness: 2 }, // allows minor typos
                             size: 5,
                         },
                     },
@@ -325,7 +324,7 @@ const deleteProduct = async (req, res) => {
 }
 
 
-module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct, fetchSingleProduct }
+module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct, fetchSingleProduct, getSuggestions }
 
 
 

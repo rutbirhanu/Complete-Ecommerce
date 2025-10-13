@@ -32,6 +32,7 @@ async function createProductIndex() {
             name: { type: "text" },
             description: { type: "text" },
             price: { type: "float" },
+            brand: { type: "keyword" },
             category: { type: "keyword" },
             stock: { type: "integer" },
             suggest: {
@@ -45,7 +46,5 @@ async function createProductIndex() {
     console.log("✅ Created 'products' index in Elasticsearch");
   }
 }
-
-
 
 module.exports = { elasticClient, checkConnection, createProductIndex };

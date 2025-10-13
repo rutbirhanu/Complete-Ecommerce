@@ -10,6 +10,8 @@ const cookieParser = require("cookie-parser")
 const serviceAccount = require("./serviceAccountKey.json")
 const { Kafka } = require("kafkajs")
 const { producer, consumer, runSubscription } = require("./controller/orderController")
+const { elasticClient, checkConnection, createProductIndex } = require("./config/elasticsearchConfig")
+const productSchema = require("./model/product")
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -65,10 +67,43 @@ app.use("/product", productRoute)
 
 
 
+
+const bulkIndexProducts = async () => {
+  const products = await productSchema.find();
+  
+  const operations = products.flatMap((product) => [
+    { index: { _index: "products", _id: product._id.toString() } },
+    {
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      brand: product.brand,
+      price: product.price,
+      stock: product.stock,
+      suggest: {
+        input: [
+          product.name,
+          product.brand,
+          product.category,
+          product.description,
+        ].filter(Boolean),
+      },
+    },
+  ]);
+
+  await elasticClient.bulk({ refresh: true, body: operations });
+  console.log("✅ Bulk indexed all products into Elasticsearch");
+};
+
+
+
 connectDB(process.env.MONGODB_CONNECTION)
 app.listen(3500, async () => {
     await producer.connect()
     await consumer.connect()
     await runSubscription()
+    await checkConnection()
+    // await createProductIndex()
+    // await bulkIndexProducts()
     console.log("server has started")
 })
