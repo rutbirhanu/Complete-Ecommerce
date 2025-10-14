@@ -26,7 +26,7 @@ function HomePage() {
       <NavBar />
 
       {/* Categories container */}
-      <div className="flex flex-row gap-[35px] mx-6 mb-4 overflow-x-auto scrollbar-hide">
+      <div className="flex flex-row gap-[35px] mx-6 mb-4 overflow-x-auto scrollbar-hide z-30">
         {NavgationCategories.map((item) => (
           <NavCatagoryContainer
             key={item.title}

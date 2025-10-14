@@ -231,7 +231,7 @@ const getSuggestions = async (req, res) => {
                         prefix: query,
                         completion: {
                             field: "suggest",
-                            fuzzy: { fuzziness: 2 }, // allows minor typos
+                            fuzzy: { fuzziness: 1 }, // allows minor typos
                             size: 5,
                         },
                     },
