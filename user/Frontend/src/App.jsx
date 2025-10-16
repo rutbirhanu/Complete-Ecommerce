@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux"
 // import { setProduct} from "./redux/productSlice"
 import { fetchAllProducts} from "./redux/productSlice"
 import { Items } from "./assets/data/items"
+import SearchResultPage from "./pages/searchResultPage";
 
 
 
@@ -76,6 +77,7 @@ function App() {
       <Route path="/map" element={<Map />} />
       <Route path="/orders" element={<OrderPage />} />
       <Route path="/verify" element={<Verify/>}/>
+      <Route path="/search/:query" element={<SearchResultPage/>}/>
       <Route path="/category-items/:category" element={<CategoryItemsPage />} />
     </Routes>
   )

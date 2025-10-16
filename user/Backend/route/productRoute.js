@@ -1,6 +1,6 @@
 const express = require("express")
 const upload= require("../middleware/multer")
-const { addProduct, sendNotification, allProducts, updateProduct, deleteProduct, fetchSingleProduct, getSuggestions } = require("../controller/productController")
+const { addProduct, sendNotification, allProducts, updateProduct, deleteProduct, fetchSingleProduct, getSuggestions, searchProduct} = require("../controller/productController")
 
 const router = express.Router()
 
@@ -14,6 +14,7 @@ router.route("/update-product/:productId").put(upload.single("image"),updateProd
 router.route("/delete-product/:productId").delete(deleteProduct)
 router.route("/add-product").post(upload.single("image"), addProduct)
 router.route("/suggestion").get(getSuggestions)
+router.route("/search").get(searchProduct)
 
 
 module.exports = router

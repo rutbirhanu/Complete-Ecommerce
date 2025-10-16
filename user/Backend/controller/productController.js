@@ -47,7 +47,7 @@ const sendNotification = async (req, res) => {
 }
 
 
-const searchProducts = async (req, res) => {
+const searchProduct = async (req, res) => {
     const { query } = req.query;
 
     try {
@@ -64,12 +64,12 @@ const searchProducts = async (req, res) => {
             }
         });
 
-        const hits = result.hits.hits.map(hit => ({
+        const product = result.hits.hits.map(hit => ({
             id: hit._id,
             ...hit._source
         }));
 
-        res.json(hits);
+        res.json(product);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Search failed" });
@@ -324,7 +324,7 @@ const deleteProduct = async (req, res) => {
 }
 
 
-module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct, fetchSingleProduct, getSuggestions }
+module.exports = { addProduct, sendNotification, allProducts, deleteProduct, updateProduct, fetchSingleProduct, getSuggestions, searchProduct }
 
 
 
