@@ -77,7 +77,7 @@ function App() {
       <Route path="/map" element={<Map />} />
       <Route path="/orders" element={<OrderPage />} />
       <Route path="/verify" element={<Verify/>}/>
-      <Route path="/search/:query" element={<SearchResultPage/>}/>
+      <Route path="/search" element={<SearchResultPage/>}/>
       <Route path="/category-items/:category" element={<CategoryItemsPage />} />
     </Routes>
   )
