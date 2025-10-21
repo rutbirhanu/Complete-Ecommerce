@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
-
 export const fetchAllProducts = createAsyncThunk(
     "product/fetchAllProducts",
-    async ( productData, thunkAPI) => {
+    async (productData, thunkAPI) => {
         try {
             const req = await fetch("http://localhost:3500/product/all-products",
                 {
@@ -25,11 +24,33 @@ export const fetchAllProducts = createAsyncThunk(
 )
 
 
+export const searchProducts = createAsyncThunk(
+    "product/searchProducts",
+    async (searchTerm, thunkAPI) => {
+        try {
+            const req = await fetch(`http://localhost:3500/product/search?query=${searchTerm}`,
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            )
+
+            const res = await req.json()
+            console.log(res.products)
+            return res.products
+
+        }
+        catch (err) {
+            return thunkAPI.rejectWithValue(err.response.data.error)
+        }
+    }
+)
+
 export const fetchProductDetail = createAsyncThunk(
     "product/fetchSingleProduct",
     async (productId, thunkAPI) => {
         try {
-            const req = await  fetch(`http://localhost:3500/product/get-product/${productId}`,
+            const req = await fetch(`http://localhost:3500/product/get-product/${productId}`,
                 {
                     method: "GET",
                     credentials: "include"
@@ -50,9 +71,10 @@ export const fetchProductDetail = createAsyncThunk(
 
 let initialState = {
     products: [],
-    product:{},
+    product: {},
     isPending: false,
     searchTerm: "",
+    searchedProducts: [],
     filteredProducts: []
 }
 
@@ -80,6 +102,16 @@ const productSlice = createSlice({
                 state.product = action.payload
             })
             .addCase(fetchProductDetail.rejected, state => {
+                state.isPending = false
+            })
+            .addCase(searchProducts.pending, state => {
+                state.isPending = true
+            })
+            .addCase(searchProducts.fulfilled, (state, action) => {
+                state.isPending = false
+                state.searchedProducts = action.payload
+            })
+            .addCase(searchProducts.rejected, state => {
                 state.isPending = false
             })
 
