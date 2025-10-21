@@ -58,7 +58,7 @@ const searchProduct = async (req, res) => {
                     multi_match: {
                         query,
                         fields: ["name", "description", "category", "brand"],
-                        fuzziness: "auto" // allows for typos
+                        fuzziness: "auto" 
                     }
                 }
             }
@@ -68,6 +68,7 @@ const searchProduct = async (req, res) => {
             id: hit._id,
             ...hit._source
         }));
+        console.log(product)
 
         res.json(product);
     } catch (error) {

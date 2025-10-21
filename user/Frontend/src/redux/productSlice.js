@@ -36,8 +36,8 @@ export const searchProducts = createAsyncThunk(
             )
 
             const res = await req.json()
-            console.log(res.products)
-            return res.products
+            console.log(res)
+            return res
 
         }
         catch (err) {
