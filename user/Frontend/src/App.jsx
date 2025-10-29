@@ -7,14 +7,10 @@ import LogIn from "./pages/LogIn";
 import CartPage from "./pages/CartPage";
 import CategoryItemsPage from "./pages/CategoryItemsPage";
 import Map from "./pages/Map";
-// import SuccessPage from "./pages/SuccessPage";
-// import CancelPage from "./pages/CancelPage";
 import OrderPage from "./pages/OrderPage";
 import { useEffect } from "react";
 import Verify from "./pages/Verify";
-// import { requestFCMToken } from "./firebase";
 import { useDispatch } from "react-redux"
-// import { setProduct} from "./redux/productSlice"
 import { fetchAllProducts} from "./redux/productSlice"
 import { Items } from "./assets/data/items"
 import SearchResultPage from "./pages/searchResultPage";
