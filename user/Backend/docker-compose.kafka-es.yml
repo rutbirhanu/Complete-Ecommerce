@@ -38,7 +38,7 @@ services:
       - KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE = true
       - DYNAMIC_CONFIG_ENABLED = 'true'
     ports:
-      - "8080:8080"
+      - 8080:8080
 
     networks:
       - kafka-network
@@ -53,11 +53,9 @@ services:
       - xpack.security.enabled=false
     
     ports:
-      - "9200:9200"
+      - 9200:9200
 
   
-
-
 networks:
   kafka-network:
     driver: bridge
